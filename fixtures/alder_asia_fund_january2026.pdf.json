@@ -1,0 +1,118 @@
+{
+  "fixture_format": 1,
+  "source_file": "alder_asia_fund_january2026.pdf",
+  "source_md5": "76f7c280a45e6c281d665949b088aae8",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7416,
+  "output_tokens": 1219,
+  "latency_ms": 9260,
+  "generated_at": "2026-10-16T23:57:22Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.9,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Alder Asia Fund",
+          "page": 1,
+          "source_snippet": "Alder Asia Fund",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Alder Capital Pte. Ltd.",
+          "page": 1,
+          "source_snippet": "Investment manager Alder Capital Pte. Ltd.",
+          "confidence": 0.95
+        },
+        "strategy": {
+          "value": "Asia-Pacific equity long/short",
+          "page": 1,
+          "source_snippet": "Strategy Asia-Pacific equity long/short",
+          "confidence": 0.95
+        },
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "Net asset value\nUSD 284.3mm",
+          "confidence": 0.8
+        },
+        "as_of_date": {
+          "value": "January 2026",
+          "page": 1,
+          "source_snippet": "Investor Report — January 2026",
+          "confidence": 0.95
+        },
+        "aum": {
+          "value": "USD 284.3mm",
+          "page": 1,
+          "source_snippet": "Net asset value\nUSD 284.3mm",
+          "confidence": 0.9
+        },
+        "returns": [
+          {
+            "period": "January 2026",
+            "value": {
+              "value": "+110 bps",
+              "page": 1,
+              "source_snippet": "Month (net of fees)\n+110 bps",
+              "confidence": 0.9
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Year to date",
+            "value": {
+              "value": "+110 bps",
+              "page": 1,
+              "source_snippet": "Year to date (net)\n+110 bps",
+              "confidence": 0.9
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "management_fee": {
+            "value": "1.25% p.a.",
+            "page": 1,
+            "source_snippet": "Management fee 1.25% p.a.",
+            "confidence": 0.95
+          },
+          "performance_fee": {
+            "value": "15% over a 5% hurdle",
+            "page": 1,
+            "source_snippet": "Incentive fee 15% over a 5% hurdle",
+            "confidence": 0.95
+          },
+          "redemption_terms": {
+            "value": "Quarterly with 90 days' notice; 25% investor-level gate",
+            "page": 1,
+            "source_snippet": "Redemptions Quarterly with 90 days' notice; 25% investor-level gate",
+            "confidence": 0.9
+          },
+          "share_class": {
+            "value": "Class A",
+            "page": 1,
+            "source_snippet": "net of all fees, Class A shares",
+            "confidence": 0.85
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "A L D E R C A P I TA L\nAlder Asia Fund\nInvestor Report — January 2026\nMonth (net of fees) | Year to date (net) | Net asset value\n+110 bps | +110 bps | USD 284.3mm\nFund information\nInvestment manager | Alder Capital Pte. Ltd.\nStrategy | Asia-Pacific equity long/short\nRedemptions | Quarterly with 90 days' notice; 25% investor-level gate\nManagement fee | 1.25% p.a.\nIncentive fee | 15% over a 5% hurdle\nCommentary\nOur long book in Japanese industrials and Korean semiconductors drove performance, while shorts in Chinese consumer names were roughly flat.\nPerformance in basis points, net of all fees, Class A shares. Fictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "reporting_period": "January 2026",
+      "returns_note": "Performance in basis points, net of all fees, Class A shares.",
+      "disclaimer": "Fictional fund for demonstration purposes."
+    }
+  }
+}

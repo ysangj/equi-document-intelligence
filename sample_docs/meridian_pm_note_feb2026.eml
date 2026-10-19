@@ -1,0 +1,23 @@
+Content-Type: multipart/alternative; boundary="===============8244456330680444153=="
+MIME-Version: 1.0
+From: Priya Raman <praman@meridian-ca.example>
+To: investor.relations@example-allocator.com
+Subject: =?utf-8?q?Meridian_RV_=E2=80=93_quick_note_on_positioning?=
+Date: Wed, 18 Feb 2026 16:40:00 +0000
+
+--===============8244456330680444153==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+<html><body style="font-family:Georgia,serif;font-size:14px">
+<p>Hi all,</p>
+<p>A few of you asked about our interest-rate exposure after last week's CPI print. Short version: we are
+running very little outright rate sensitivity. Most of the book is in swap spreads and cash-futures basis,
+which are largely insulated from parallel moves in yields.</p>
+<p>We cut duration earlier in the year and have not added it back. If the March meeting surprises hawkishly
+we would expect a small positive impact from our curve positions.</p>
+<p>Month-to-date we are up roughly 15bps. Happy to set up calls.</p>
+<p>Priya<br>Portfolio Manager, Meridian Rates Relative Value Fund</p>
+<p style="font-size:11px;color:#888">Fictional fund and people for demonstration purposes.</p></body></html>
+--===============8244456330680444153==--

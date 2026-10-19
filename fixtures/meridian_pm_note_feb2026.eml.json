@@ -1,0 +1,50 @@
+{
+  "fixture_format": 1,
+  "source_file": "meridian_pm_note_feb2026.eml",
+  "source_md5": "78a9215b19b20b67c68c9d8a7769c9cf",
+  "mime_type": "message/rfc822",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 5922,
+  "output_tokens": 809,
+  "latency_ms": 7241,
+  "generated_at": "2026-10-16T23:58:05Z",
+  "extraction": {
+    "document_type": "email",
+    "document_type_confidence": 0.9,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Meridian Rates Relative Value Fund",
+          "page": 1,
+          "source_snippet": "Portfolio Manager, Meridian Rates Relative Value Fund",
+          "confidence": 0.9
+        },
+        "manager": null,
+        "strategy": null,
+        "currency": null,
+        "as_of_date": {
+          "value": "Wed, 18 Feb 2026 16:40:00 +0000",
+          "page": 1,
+          "source_snippet": "Date: Wed, 18 Feb 2026 16:40:00 +0000",
+          "confidence": 0.7
+        },
+        "aum": null,
+        "returns": [],
+        "other_metrics": {}
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Subject: Meridian RV – quick note on positioning\nFrom: Priya Raman <praman@meridian-ca.example>\nDate: Wed, 18 Feb 2026 16:40:00 +0000\n\nHi all,\nA few of you asked about our interest-rate exposure after last week's CPI print. Short version: we are running very little outright rate sensitivity. Most of the book is in swap spreads and cash-futures basis, which are largely insulated from parallel moves in yields.\nWe cut duration earlier in the year and have not added it back. If the March meeting surprises hawkishly we would expect a small positive impact from our curve positions.\nMonth-to-date we are up roughly 15bps. Happy to set up calls.\nPriya\nPortfolio Manager, Meridian Rates Relative Value Fund\nFictional fund and people for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "month_to_date_estimate": "Month-to-date we are up roughly 15bps (mid-February 2026, as of 18 Feb 2026; running figure, not a full-period return)",
+      "document_date": "Wed, 18 Feb 2026 16:40:00 +0000",
+      "positioning": "Little outright rate sensitivity; book mostly in swap spreads and cash-futures basis; duration cut earlier in the year"
+    }
+  }
+}

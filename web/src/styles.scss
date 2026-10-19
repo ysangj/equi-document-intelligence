@@ -1,0 +1,334 @@
+@use '@angular/material' as mat;
+
+/* Design tokens: taken from ui-mockup.html (:root). */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #1b2430;
+  --muted: #6b7684;
+  --line: #e3e7ec;
+  --accent: #2f5bea;
+  --accent-soft: #e8eefe;
+  --accent-ink: #28408f;
+  --ok: #1f8a4c;
+  --ok-soft: #e5f5ec;
+  --warn: #b26a00;
+  --warn-soft: #fff3df;
+  --bad: #c23b3b;
+  --bad-soft: #fde8e8;
+  --head-bg: #fafbfc;
+  --row-hover: #f8faff;
+  --mark: #fff1a8;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, sans-serif;
+}
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: var(--sans),
+        brand-family: var(--sans),
+      ),
+      density: -2,
+    )
+  );
+  /* Restyle Material to the mockup's palette. */
+  --mat-sys-primary: var(--accent);
+  --mat-sys-surface: var(--panel);
+  --mat-sys-on-surface: var(--ink);
+  --mat-sys-outline-variant: var(--line);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.45 var(--sans);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---- shared building blocks (mockup classes) -------------------------------- */
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.seg button {
+  border: 0;
+  background: var(--panel);
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+  color: var(--ink);
+}
+.seg button + button {
+  border-left: 1px solid var(--line);
+}
+.seg button.on {
+  background: var(--ink);
+  color: #fff;
+}
+/*
+ * Narrow main area (phone, or Ask docked at its max so main = 360 px): a segmented
+ * strip in a filter bar takes the full row, tightens its padding, and wraps instead
+ * of clipping (BUG-Q7-01). Dividers come from a 1px gap over the --line background,
+ * so they are drawn between wrapped rows too. DOM order, roles and focus are unchanged.
+ */
+@container main (max-width: 568px) {
+  .filters > .seg {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 1px;
+    background: var(--line);
+  }
+  .filters > .seg button {
+    flex: 1 1 auto;
+    padding: 6px 8px;
+  }
+  .filters > .seg button + button {
+    border-left: 0;
+  }
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 11px;
+  background: var(--panel);
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+button.chip {
+  cursor: pointer;
+}
+button.chip:hover {
+  border-color: #cdd8fb;
+}
+.chip b {
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) {
+  border-color: #cdd8fb;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn.link {
+  border: 0;
+  background: none;
+  color: var(--accent);
+  padding: 0;
+}
+
+.pos {
+  color: var(--ok);
+}
+.neg {
+  color: var(--bad);
+}
+.muted {
+  color: var(--muted);
+}
+.doc {
+  color: var(--accent);
+}
+
+.st {
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.st.ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.st.rev {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.st.cf,
+.st.fail {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+.st.proc {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.snip {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--head-bg);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- data tables (mat-table restyled to the mockup) --------------------------- */
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+table.data th,
+table.data td {
+  padding: 9px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  font: inherit;
+  color: var(--ink);
+}
+table.data th {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  background: var(--head-bg);
+}
+table.data td.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+table.data th.num {
+  text-align: right;
+}
+table.data th.num .mat-sort-header-container {
+  justify-content: flex-end;
+}
+table.data tbody tr.row {
+  cursor: pointer;
+}
+table.data tbody tr.row:hover {
+  background: var(--row-hover);
+}
+table.data tbody tr.row.selected {
+  background: var(--accent-soft);
+}
+table.data td.cell-click:hover {
+  text-decoration: underline;
+  text-decoration-color: #cdd8fb;
+}
+table.data td.flagged {
+  background: var(--warn-soft);
+}
+table.data td.selected-cell {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.mat-sort-header-arrow {
+  color: var(--muted);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.mat-mdc-paginator {
+  background: transparent;
+  border-top: 0;
+  font-size: 12.5px;
+}
+
+/* ---- empty / error states ------------------------------------------------------ */
+
+.state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.state h3 {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 15px;
+}
+.state.error h3 {
+  color: var(--bad);
+}
+
+/* snackbar error */
+.snack-error {
+  --mat-snack-bar-container-color: #3a1f1f;
+}
+
+/* filter popover checkboxes: the whole row is clickable */
+.cdk-overlay-pane .mat-mdc-checkbox,
+.cdk-overlay-pane .mat-mdc-checkbox .mdc-form-field {
+  display: flex;
+  width: 100%;
+}
+.cdk-overlay-pane .mat-mdc-checkbox label {
+  flex: 1;
+  cursor: pointer;
+  padding-right: 4px;
+}

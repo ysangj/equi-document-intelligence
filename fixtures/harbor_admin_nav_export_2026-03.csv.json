@@ -1,0 +1,146 @@
+{
+  "fixture_format": 1,
+  "source_file": "harbor_admin_nav_export_2026-03.csv",
+  "source_md5": "cd17c8b5ecdb61cd917a56c7265dfabf",
+  "mime_type": "text/csv",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 5861,
+  "output_tokens": 2049,
+  "latency_ms": 15133,
+  "generated_at": "2026-10-16T23:57:55Z",
+  "extraction": {
+    "document_type": "performance_report",
+    "document_type_confidence": 0.93,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Harbor Credit Opps Fund",
+          "page": 1,
+          "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03",
+          "confidence": 0.95
+        },
+        "manager": null,
+        "strategy": null,
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "AUM_USD",
+          "confidence": 0.75
+        },
+        "as_of_date": {
+          "value": "2026-03",
+          "page": 1,
+          "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03,1225.49,0.0055,937978036",
+          "confidence": 0.85
+        },
+        "aum": {
+          "value": "937978036",
+          "page": 1,
+          "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03,1225.49,0.0055,937978036",
+          "confidence": 0.9
+        },
+        "returns": [
+          {
+            "period": "2025-10",
+            "value": {
+              "value": "0.0058",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2025-10,1189.26,0.0058,910249000",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2025-11",
+            "value": {
+              "value": "0.0062",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2025-11,1196.63,0.0062,915892544",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2025-12",
+            "value": {
+              "value": "0.0049",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2025-12,1202.49,0.0049,920380417",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026-01",
+            "value": {
+              "value": "0.0071",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-01,1211.03,0.0071,926915118",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026-02",
+            "value": {
+              "value": "0.0064",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-02,1218.78,0.0064,932847375",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026-03",
+            "value": {
+              "value": "0.0055",
+              "page": 1,
+              "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03,1225.49,0.0055,937978036",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "A",
+            "page": 1,
+            "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03",
+            "confidence": 0.9
+          },
+          "nav_per_share": {
+            "value": "1225.49",
+            "page": 1,
+            "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03,1225.49,0.0055,937978036",
+            "confidence": 0.9
+          },
+          "fund_id": {
+            "value": "HCO-A",
+            "page": 1,
+            "source_snippet": "HCO-A,Harbor Credit Opps Fund,A,2026-03",
+            "confidence": 0.9
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "FUND_ID | FUND_NAME | SHARE_CLASS | PERIOD | NAV_PER_SHARE | NET_RET | AUM_USD\nHCO-A | Harbor Credit Opps Fund | A | 2025-10 | 1189.26 | 0.0058 | 910249000\nHCO-A | Harbor Credit Opps Fund | A | 2025-11 | 1196.63 | 0.0062 | 915892544\nHCO-A | Harbor Credit Opps Fund | A | 2025-12 | 1202.49 | 0.0049 | 920380417\nHCO-A | Harbor Credit Opps Fund | A | 2026-01 | 1211.03 | 0.0071 | 926915118\nHCO-A | Harbor Credit Opps Fund | A | 2026-02 | 1218.78 | 0.0064 | 932847375\nHCO-A | Harbor Credit Opps Fund | A | 2026-03 | 1225.49 | 0.0055 | 937978036"
+      }
+    ],
+    "extra": {
+      "nav_per_share_history": "2025-10: 1189.26; 2025-11: 1196.63; 2025-12: 1202.49; 2026-01: 1211.03; 2026-02: 1218.78; 2026-03: 1225.49",
+      "aum_usd_history": "2025-10: 910249000; 2025-11: 915892544; 2025-12: 920380417; 2026-01: 926915118; 2026-02: 932847375; 2026-03: 937978036",
+      "return_format": "NET_RET column expressed as decimal fractions (e.g. 0.0055)"
+    }
+  }
+}

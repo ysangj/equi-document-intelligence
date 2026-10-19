@@ -1,0 +1,185 @@
+{
+  "fixture_format": 1,
+  "source_file": "northwind_monthly_feb26.pdf",
+  "source_md5": "b56e10f51b49ab6b53cdba79679fd31c",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7452,
+  "output_tokens": 2071,
+  "latency_ms": 14442,
+  "generated_at": "2026-10-16T23:58:35Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.93,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Northwind Global Macro Fund",
+          "page": 1,
+          "source_snippet": "Northwind Global Macro Fund",
+          "confidence": 0.97
+        },
+        "manager": {
+          "value": "Northwind Capital Management",
+          "page": 1,
+          "source_snippet": "Northwind Capital Management · Monthly Update · Feb-26",
+          "confidence": 0.93
+        },
+        "strategy": {
+          "value": "Discretionary global macro",
+          "page": 1,
+          "source_snippet": "Strategy: Discretionary global macro",
+          "confidence": 0.97
+        },
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "Base currency: USD",
+          "confidence": 0.97
+        },
+        "as_of_date": {
+          "value": "Feb-26",
+          "page": 1,
+          "source_snippet": "Monthly Update · Feb-26",
+          "confidence": 0.92
+        },
+        "aum": {
+          "value": "USD 1.18bn",
+          "page": 1,
+          "source_snippet": "Fund assets: USD 1.18bn",
+          "confidence": 0.95
+        },
+        "returns": [
+          {
+            "period": "2025 Oct",
+            "value": {
+              "value": "-0.30",
+              "page": 1,
+              "source_snippet": "2025 -0.30 0.85 1.40 1.96",
+              "confidence": 0.9
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2025 Nov",
+            "value": {
+              "value": "0.85",
+              "page": 1,
+              "source_snippet": "2025 -0.30 0.85 1.40 1.96",
+              "confidence": 0.9
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2025 Dec",
+            "value": {
+              "value": "1.40",
+              "page": 1,
+              "source_snippet": "2025 -0.30 0.85 1.40 1.96",
+              "confidence": 0.9
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2025 YTD",
+            "value": {
+              "value": "1.96",
+              "page": 1,
+              "source_snippet": "2025 -0.30 0.85 1.40 1.96",
+              "confidence": 0.9
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026 Jan",
+            "value": {
+              "value": "1.92",
+              "page": 1,
+              "source_snippet": "2026 1.92 0.55 2.48",
+              "confidence": 0.92
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026 Feb",
+            "value": {
+              "value": "0.55",
+              "page": 1,
+              "source_snippet": "2026 1.92 0.55 2.48",
+              "confidence": 0.92
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "2026 YTD",
+            "value": {
+              "value": "2.48",
+              "page": 1,
+              "source_snippet": "2026 1.92 0.55 2.48",
+              "confidence": 0.92
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "A USD",
+            "page": 1,
+            "source_snippet": "Share class A USD.",
+            "confidence": 0.9
+          },
+          "management_fee": {
+            "value": "2%",
+            "page": 1,
+            "source_snippet": "Mgmt / perf fee: 2% / 20%",
+            "confidence": 0.93
+          },
+          "performance_fee": {
+            "value": "20%",
+            "page": 1,
+            "source_snippet": "Mgmt / perf fee: 2% / 20%",
+            "confidence": 0.93
+          },
+          "volatility": {
+            "value": "9.4%",
+            "page": 1,
+            "source_snippet": "Annualised vol: 9.4%",
+            "confidence": 0.95
+          },
+          "sharpe": {
+            "value": "1.12",
+            "page": 1,
+            "source_snippet": "Sharpe (3y): 1.12",
+            "confidence": 0.95
+          },
+          "dealing": {
+            "value": "Monthly; 45 days notice",
+            "page": 1,
+            "source_snippet": "Dealing: Monthly; 45 days notice",
+            "confidence": 0.93
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Northwind Global Macro Fund\nNorthwind Capital Management · Monthly Update · Feb-26\nPerf. (net) — %\nYear | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | YTD\n2025 | | | | | | | | | | -0.30 | 0.85 | 1.40 | 1.96\n2026 | 1.92 | 0.55 | | | | | | | | | | | 2.48\nReview\nReturns were modest. Gains in commodity relative value offset small losses in EM FX. We added to long gold and trimmed USD exposure.\nFund Facts\nStrategy: Discretionary global macro\nBase currency: USD\nFund assets: USD 1.18bn\nDealing: Monthly; 45 days notice\nMgmt / perf fee: 2% / 20%\nAnnualised vol: 9.4%\nSharpe (3y): 1.12\nShare class A USD. Performance is net of all fees. Fictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "returns_note": "Performance is net of all fees. Returns in %.",
+      "sharpe_period": "Sharpe ratio is 3-year",
+      "disclaimer": "Fictional fund for demonstration purposes."
+    }
+  }
+}

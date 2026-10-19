@@ -1,0 +1,126 @@
+{
+  "fixture_format": 1,
+  "source_file": "meridian_rv_tearsheet_2026-01.pdf",
+  "source_md5": "bf584f59dedd0d60aadfed7210c5f44f",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7495,
+  "output_tokens": 2060,
+  "latency_ms": 15947,
+  "generated_at": "2026-10-16T23:58:21Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.95,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "MERIDIAN RATES RELATIVE VALUE FUND",
+          "page": 1,
+          "source_snippet": "MERIDIAN RATES RELATIVE VALUE FUND",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Meridian Capital Advisors",
+          "page": 1,
+          "source_snippet": "Manager Meridian Capital\nAdvisors",
+          "confidence": 0.9
+        },
+        "strategy": {
+          "value": "Fixed income relative value",
+          "page": 1,
+          "source_snippet": "Strategy Fixed income relative\nvalue",
+          "confidence": 0.9
+        },
+        "currency": null,
+        "as_of_date": {
+          "value": "01/31/2026",
+          "page": 1,
+          "source_snippet": "As of 01/31/2026",
+          "confidence": 0.95
+        },
+        "aum": {
+          "value": "$640mm",
+          "page": 1,
+          "source_snippet": "AUM $640mm",
+          "confidence": 0.95
+        },
+        "returns": [
+          {
+            "period": "January",
+            "value": {
+              "value": "(0.36)%",
+              "page": 1,
+              "source_snippet": "January (0.36)%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Year to date",
+            "value": {
+              "value": "(0.36)%",
+              "page": 1,
+              "source_snippet": "Year to date\n(0.36)%",
+              "confidence": 0.95
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "founders",
+            "page": 1,
+            "source_snippet": "Returns are net of fees for the founders share class.",
+            "confidence": 0.8
+          },
+          "fees": {
+            "value": "1.75 / 20",
+            "page": 1,
+            "source_snippet": "Fees 1.75 / 20",
+            "confidence": 0.9
+          },
+          "leverage": {
+            "value": "6.2x",
+            "page": 1,
+            "source_snippet": "(gross) 6.2x",
+            "confidence": 0.9
+          },
+          "liquidity": {
+            "value": "Quarterly, 60d notice, 1yr soft lock",
+            "page": 1,
+            "source_snippet": "Liquidity Quarterly, 60d\nnotice, 1yr soft lock",
+            "confidence": 0.85
+          },
+          "duration": {
+            "value": "2.1 years",
+            "page": 1,
+            "source_snippet": "duration from 3.4 to 2.1 years",
+            "confidence": 0.75
+          },
+          "margin_usage": {
+            "value": "38%",
+            "page": 1,
+            "source_snippet": "usage is 38% of available",
+            "confidence": 0.8
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "MERIDIAN RATES RELATIVE VALUE FUND Tear Sheet | As of 01/31/2026\nNET RETURN\nJanuary\n(0.36)%\nYear to date\n(0.36)%\nMONTHLY NET RETURN 2026\nJanuary | (0.36)%\nFUND DETAILS\nManager | Meridian Capital Advisors\nStrategy | Fixed income relative value\nAUM | $640mm\nLiquidity | Quarterly, 60d notice, 1yr soft lock\nFees | 1.75 / 20\nLeverage (gross) | 6.2x\nManager Comments. Rates were volatile into the January FOMC. Our main loss came from a 2s10s flattener that moved against us as the long end sold off. We reduced duration from 3.4 to 2.1 years ahead of the March meeting and remain cautious on term premium. Liquidity in our core cash-futures basis positions remains good, and margin usage is 38% of available.\nReturns are net of fees for the founders share class. Negative returns shown in parentheses. Fictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "returns_footnote": "Returns are net of fees for the founders share class. Negative returns shown in parentheses.",
+      "document_date": "01/31/2026",
+      "duration_change": "Duration reduced from 3.4 to 2.1 years ahead of the March meeting",
+      "disclaimer": "Fictional fund for demonstration purposes."
+    }
+  }
+}

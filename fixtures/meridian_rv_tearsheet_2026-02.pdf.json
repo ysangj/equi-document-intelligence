@@ -1,0 +1,130 @@
+{
+  "fixture_format": 1,
+  "source_file": "meridian_rv_tearsheet_2026-02.pdf",
+  "source_md5": "d36e707f4804f83b33cce84bcf1dd87f",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7500,
+  "output_tokens": 1932,
+  "latency_ms": 15831,
+  "generated_at": "2026-10-16T23:58:30Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.95,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "MERIDIAN RATES RELATIVE VALUE FUND",
+          "page": 1,
+          "source_snippet": "MERIDIAN RATES RELATIVE VALUE FUND Tear Sheet",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Meridian Capital Advisors",
+          "page": 1,
+          "source_snippet": "Manager Meridian Capital Advisors",
+          "confidence": 0.9
+        },
+        "strategy": {
+          "value": "Fixed income relative value",
+          "page": 1,
+          "source_snippet": "Strategy Fixed income relative value",
+          "confidence": 0.9
+        },
+        "currency": null,
+        "as_of_date": {
+          "value": "02/28/2026",
+          "page": 1,
+          "source_snippet": "As of 02/28/2026",
+          "confidence": 0.95
+        },
+        "aum": {
+          "value": "$640mm",
+          "page": 1,
+          "source_snippet": "AUM $640mm",
+          "confidence": 0.95
+        },
+        "returns": [
+          {
+            "period": "February",
+            "value": {
+              "value": "0.21%",
+              "page": 1,
+              "source_snippet": "February 0.21%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Year to date",
+            "value": {
+              "value": "0.15%",
+              "page": 1,
+              "source_snippet": "Year to date\n0.15%",
+              "confidence": 0.95
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "January 2026",
+            "value": {
+              "value": "(0.36)%",
+              "page": 1,
+              "source_snippet": "January (0.36)%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "founders share class",
+            "page": 1,
+            "source_snippet": "Returns are net of fees for the founders share class.",
+            "confidence": 0.8
+          },
+          "fees": {
+            "value": "1.75 / 20",
+            "page": 1,
+            "source_snippet": "Fees 1.75 / 20",
+            "confidence": 0.9
+          },
+          "leverage": {
+            "value": "6.2x",
+            "page": 1,
+            "source_snippet": "(gross) 6.2x",
+            "confidence": 0.9
+          },
+          "liquidity": {
+            "value": "Quarterly, 60d notice, 1yr soft lock",
+            "page": 1,
+            "source_snippet": "Liquidity Quarterly, 60d",
+            "confidence": 0.85
+          },
+          "margin_usage": {
+            "value": "38%",
+            "page": 1,
+            "source_snippet": "margin usage is\n38% of available",
+            "confidence": 0.8
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "MERIDIAN RATES RELATIVE VALUE FUND Tear Sheet | As of 02/28/2026\nNET RETURN\nFebruary\n0.21%\nYear to date\n0.15%\nMONTHLY NET RETURN 2026\nJanuary | (0.36)%\nFebruary | 0.21%\nFUND DETAILS\nManager | Meridian Capital Advisors\nStrategy | Fixed income relative value\nAUM | $640mm\nLiquidity | Quarterly, 60d notice, 1yr soft lock\nFees | 1.75 / 20\nLeverage (gross) | 6.2x\nManager Comments. February returns came from swap spread and basis trades. Portfolio rate sensitivity remains low; a 25bp parallel move in Treasuries would move NAV by roughly 0.5%. We expect to keep interest-rate exposure light until inflation data stabilizes. Liquidity in our core cash-futures basis positions remains good, and margin usage is 38% of available.\nReturns are net of fees for the founders share class. Negative returns shown in parentheses. Fictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "returns_basis": "Returns are net of fees for the founders share class. Negative returns shown in parentheses.",
+      "rate_sensitivity": "A 25bp parallel move in Treasuries would move NAV by roughly 0.5%.",
+      "disclaimer": "Fictional fund for demonstration purposes."
+    }
+  }
+}

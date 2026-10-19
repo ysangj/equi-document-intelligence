@@ -1,0 +1,30 @@
+# Secrets (FR-0)
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Caches / runtime
+.cache/
+.run/
+
+# Web
+node_modules/
+web/dist/
+
+# OS
+.DS_Store
+
+# Agent tooling state
+.omc/
+
+# Not committed (user decision)
+.claude/
+sample_docs.zip
+qa/
+docs/progress.md

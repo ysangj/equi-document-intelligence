@@ -1,0 +1,143 @@
+{
+  "fixture_format": 1,
+  "source_file": "harbor_credit_q4_2025_investor_letter.pdf",
+  "source_md5": "55b0c82b8ee044e668293707a2930336",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7566,
+  "output_tokens": 2311,
+  "latency_ms": 17370,
+  "generated_at": "2026-10-16T23:57:57Z",
+  "extraction": {
+    "document_type": "performance_report",
+    "document_type_confidence": 0.85,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Harbor Credit Opportunities Fund",
+          "page": 1,
+          "source_snippet": "Harbor Credit Opportunities Fund returned 1.70% net",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "HARBOR ASSET MANAGEMENT",
+          "page": 1,
+          "source_snippet": "HARBOR ASSET MANAGEMENT",
+          "confidence": 0.85
+        },
+        "strategy": null,
+        "currency": null,
+        "as_of_date": {
+          "value": "Q4 2025",
+          "page": 1,
+          "source_snippet": "Q4 2025 1.70%",
+          "confidence": 0.85
+        },
+        "aum": {
+          "value": "$905 million",
+          "page": 1,
+          "source_snippet": "Fund AUM at quarter end was $905 million",
+          "confidence": 0.95
+        },
+        "returns": [
+          {
+            "period": "October 2025",
+            "value": {
+              "value": "0.58%",
+              "page": 1,
+              "source_snippet": "October 2025 0.58%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "November 2025",
+            "value": {
+              "value": "0.62%",
+              "page": 1,
+              "source_snippet": "November 2025 0.62%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "December 2025",
+            "value": {
+              "value": "0.49%",
+              "page": 1,
+              "source_snippet": "December 2025 0.49%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Q4 2025",
+            "value": {
+              "value": "1.70%",
+              "page": 1,
+              "source_snippet": "Q4 2025 1.70%",
+              "confidence": 0.95
+            },
+            "return_type": "QTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "full-year",
+            "value": {
+              "value": "7.9%",
+              "page": 1,
+              "source_snippet": "full-year performance to 7.9% net",
+              "confidence": 0.85
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "duration": {
+            "value": "roughly 1.3 years",
+            "page": 1,
+            "source_snippet": "Portfolio duration remains short at roughly 1.3 years",
+            "confidence": 0.85
+          },
+          "dry_powder": {
+            "value": "14% of NAV",
+            "page": 1,
+            "source_snippet": "Dry powder stands at 14% of NAV",
+            "confidence": 0.85
+          },
+          "redemption_frequency": {
+            "value": "quarterly redemptions",
+            "page": 1,
+            "source_snippet": "Liquidity: quarterly redemptions",
+            "confidence": 0.85
+          },
+          "redemption_notice": {
+            "value": "90 days' notice",
+            "page": 1,
+            "source_snippet": "with 90 days' notice",
+            "confidence": 0.85
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "HARBOR ASSET MANAGEMENT\nJanuary 20, 2026\nDear Partners,\nHarbor Credit Opportunities Fund returned 1.70% net in the fourth quarter of\n2025, bringing full-year performance to 7.9% net. Returns were driven by carry\nin our senior secured loan book and by two restructurings that closed ahead of\nschedule.\nPeriod | Net return\nOctober 2025 | 0.58%\nNovember 2025 | 0.62%\nDecember 2025 | 0.49%\nQ4 2025 | 1.70%\nPositioning. Portfolio duration remains short at roughly 1.3 years, as most of the\nbook is floating rate. We see limited exposure to a further move in long-end\nyields, though slower rate cuts would keep coupon income elevated. Default rates\nin our universe ticked up to 3.1%, and we have been avoiding cov-lite deals in\nsoftware and healthcare services.\nOutlook. We expect 2026 to offer better entry points in stressed credit as\nmaturity walls approach. Dry powder stands at 14% of NAV.\nFund AUM at quarter end was $905 million. Liquidity: quarterly redemptions\nwith 90 days' notice.\nSincerely,\nDana Whitlock\nChief Investment Officer\nFictional fund and people for demonstration purposes.\nPage 1"
+      }
+    ],
+    "extra": {
+      "document_date": "January 20, 2026",
+      "reporting_period": "Q4 2025 (fourth quarter of 2025)",
+      "signatory": "Dana Whitlock, Chief Investment Officer",
+      "default_rate_universe": "Default rates in our universe ticked up to 3.1%",
+      "disclaimer": "Fictional fund and people for demonstration purposes."
+    }
+  }
+}

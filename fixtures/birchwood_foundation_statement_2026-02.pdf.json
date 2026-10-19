@@ -1,0 +1,216 @@
+{
+  "fixture_format": 1,
+  "source_file": "birchwood_foundation_statement_2026-02.pdf",
+  "source_md5": "8922391f895da002b120289dd936755a",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7495,
+  "output_tokens": 2510,
+  "latency_ms": 16990,
+  "generated_at": "2026-10-16T23:57:49Z",
+  "extraction": {
+    "document_type": "account_statement",
+    "document_type_confidence": 0.97,
+    "funds": [],
+    "statements": [
+      {
+        "account_name": {
+          "value": "Birchwood Foundation",
+          "page": 1,
+          "source_snippet": "Account: Birchwood Foundation",
+          "confidence": 0.97
+        },
+        "account_number_masked": {
+          "value": "XXXX-9025",
+          "page": 1,
+          "source_snippet": "Acct No. XXXX-9025",
+          "confidence": 0.97
+        },
+        "custodian_or_manager": {
+          "value": "Larkspur Trust Company",
+          "page": 1,
+          "source_snippet": "Larkspur Trust Company",
+          "confidence": 0.95
+        },
+        "fund_name": null,
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "02/01/2026 to 02/28/2026 (USD)",
+          "confidence": 0.95
+        },
+        "period_start": {
+          "value": "02/01/2026",
+          "page": 1,
+          "source_snippet": "Account Summary — 02/01/2026 to 02/28/2026",
+          "confidence": 0.97
+        },
+        "period_end": {
+          "value": "02/28/2026",
+          "page": 1,
+          "source_snippet": "Account Summary — 02/01/2026 to 02/28/2026",
+          "confidence": 0.97
+        },
+        "opening_balance": {
+          "value": "48,200,000.00",
+          "page": 1,
+          "source_snippet": "Beginning market value 48,200,000.00",
+          "confidence": 0.97
+        },
+        "contributions": {
+          "value": "0.00",
+          "page": 1,
+          "source_snippet": "Contributions 0.00",
+          "confidence": 0.97
+        },
+        "withdrawals": {
+          "value": "(1,000,000.00)",
+          "page": 1,
+          "source_snippet": "Withdrawals (1,000,000.00)",
+          "confidence": 0.97
+        },
+        "pnl": {
+          "value": "236,000.00",
+          "page": 1,
+          "source_snippet": "Investment gain / (loss) 236,000.00",
+          "confidence": 0.97
+        },
+        "fees": {
+          "value": "(12,050.00)",
+          "page": 1,
+          "source_snippet": "Fees (12,050.00)",
+          "confidence": 0.97
+        },
+        "closing_balance": {
+          "value": "47,423,950.00",
+          "page": 1,
+          "source_snippet": "Ending market value 47,423,950.00",
+          "confidence": 0.97
+        },
+        "holdings": [
+          {
+            "name": {
+              "value": "Meridian Rates Relative Value Fund",
+              "page": 1,
+              "source_snippet": "Meridian Rates Relative Value Fund Hedge fund 14,100,000 29.7%",
+              "confidence": 0.95
+            },
+            "identifier": null,
+            "quantity": null,
+            "market_value": {
+              "value": "14,100,000",
+              "page": 1,
+              "source_snippet": "Meridian Rates Relative Value Fund Hedge fund 14,100,000",
+              "confidence": 0.9
+            },
+            "weight": {
+              "value": "29.7%",
+              "page": 1,
+              "source_snippet": "Meridian Rates Relative Value Fund Hedge fund 14,100,000 29.7%",
+              "confidence": 0.9
+            }
+          },
+          {
+            "name": {
+              "value": "Alder Asia Fund",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund Hedge fund 9,800,000 20.7%",
+              "confidence": 0.95
+            },
+            "identifier": null,
+            "quantity": null,
+            "market_value": {
+              "value": "9,800,000",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund Hedge fund 9,800,000",
+              "confidence": 0.9
+            },
+            "weight": {
+              "value": "20.7%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund Hedge fund 9,800,000 20.7%",
+              "confidence": 0.9
+            }
+          },
+          {
+            "name": {
+              "value": "Alder Dubai Fund",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund Hedge fund 7,400,000 15.6%",
+              "confidence": 0.95
+            },
+            "identifier": null,
+            "quantity": null,
+            "market_value": {
+              "value": "7,400,000",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund Hedge fund 7,400,000",
+              "confidence": 0.9
+            },
+            "weight": {
+              "value": "15.6%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund Hedge fund 7,400,000 15.6%",
+              "confidence": 0.9
+            }
+          },
+          {
+            "name": {
+              "value": "Kestrel Quant Equity Fund LP",
+              "page": 1,
+              "source_snippet": "Kestrel Quant Equity Fund LP Hedge fund 11,900,000 25.1%",
+              "confidence": 0.95
+            },
+            "identifier": null,
+            "quantity": null,
+            "market_value": {
+              "value": "11,900,000",
+              "page": 1,
+              "source_snippet": "Kestrel Quant Equity Fund LP Hedge fund 11,900,000",
+              "confidence": 0.9
+            },
+            "weight": {
+              "value": "25.1%",
+              "page": 1,
+              "source_snippet": "Kestrel Quant Equity Fund LP Hedge fund 11,900,000 25.1%",
+              "confidence": 0.9
+            }
+          },
+          {
+            "name": {
+              "value": "Cash",
+              "page": 1,
+              "source_snippet": "Cash Cash 4,223,950 8.9%",
+              "confidence": 0.95
+            },
+            "identifier": null,
+            "quantity": null,
+            "market_value": {
+              "value": "4,223,950",
+              "page": 1,
+              "source_snippet": "Cash Cash 4,223,950",
+              "confidence": 0.9
+            },
+            "weight": {
+              "value": "8.9%",
+              "page": 1,
+              "source_snippet": "Cash Cash 4,223,950 8.9%",
+              "confidence": 0.9
+            }
+          }
+        ]
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Larkspur Trust Company\nCustody & Reporting Services\nAccount Statement\nFebruary 2026\nAccount: Birchwood Foundation\nAcct No. XXXX-9025\nAccount Summary — 02/01/2026 to 02/28/2026 (USD)\nBeginning market value | 48,200,000.00\nContributions | 0.00\nWithdrawals | (1,000,000.00)\nInvestment gain / (loss) | 236,000.00\nFees | (12,050.00)\nEnding market value | 47,423,950.00\nHoldings\nInvestment | Type | Market value | % of account\nMeridian Rates Relative Value Fund | Hedge fund | 14,100,000 | 29.7%\nAlder Asia Fund | Hedge fund | 9,800,000 | 20.7%\nAlder Dubai Fund | Hedge fund | 7,400,000 | 15.6%\nKestrel Quant Equity Fund LP | Hedge fund | 11,900,000 | 25.1%\nCash | Cash | 4,223,950 | 8.9%\nValues for private funds reflect the most recent NAV reported by each fund administrator and may be estimates. Fictional institution and account."
+      }
+    ],
+    "extra": {
+      "reporting_period": "February 2026",
+      "estimate": "Values for private funds reflect the most recent NAV reported by each fund administrator and may be estimates."
+    }
+  }
+}

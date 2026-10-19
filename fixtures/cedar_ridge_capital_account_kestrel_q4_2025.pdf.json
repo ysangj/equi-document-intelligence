@@ -1,0 +1,150 @@
+{
+  "fixture_format": 1,
+  "source_file": "cedar_ridge_capital_account_kestrel_q4_2025.pdf",
+  "source_md5": "53aa33f9d096c413acf061e0cb622971",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7444,
+  "output_tokens": 2135,
+  "latency_ms": 16345,
+  "generated_at": "2026-10-16T23:57:55Z",
+  "extraction": {
+    "document_type": "account_statement",
+    "document_type_confidence": 0.97,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Kestrel Quant Equity Fund LP",
+          "page": 1,
+          "source_snippet": "Kestrel Quant Equity Fund LP",
+          "confidence": 0.95
+        },
+        "manager": null,
+        "strategy": null,
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "Capital account, 31 December 2025 USD 5,291,820.00",
+          "confidence": 0.8
+        },
+        "as_of_date": {
+          "value": "31 December 2025",
+          "page": 1,
+          "source_snippet": "For the quarter ended 31 December 2025",
+          "confidence": 0.9
+        },
+        "aum": null,
+        "returns": [
+          {
+            "period": "quarter ended 31 December 2025",
+            "value": {
+              "value": "1.37%",
+              "page": 1,
+              "source_snippet": "Quarterly net return to the Limited Partner: 1.37%",
+              "confidence": 0.9
+            },
+            "return_type": "QTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {}
+      }
+    ],
+    "statements": [
+      {
+        "account_name": {
+          "value": "Cedar Ridge Partners LP",
+          "page": 1,
+          "source_snippet": "Limited Partner: Cedar Ridge Partners LP",
+          "confidence": 0.95
+        },
+        "account_number_masked": {
+          "value": "CRP-0042",
+          "page": 1,
+          "source_snippet": "Investor ID: CRP-0042",
+          "confidence": 0.6
+        },
+        "custodian_or_manager": {
+          "value": "BRIGHTLINE FUND SERVICES (CAYMAN) LTD.",
+          "page": 1,
+          "source_snippet": "BRIGHTLINE FUND SERVICES (CAYMAN) LTD.",
+          "confidence": 0.85
+        },
+        "fund_name": {
+          "value": "Kestrel Quant Equity Fund LP",
+          "page": 1,
+          "source_snippet": "Kestrel Quant Equity Fund LP",
+          "confidence": 0.95
+        },
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "Capital account, 1 October 2025 USD 5,000,000.00",
+          "confidence": 0.9
+        },
+        "period_start": {
+          "value": "1 October 2025",
+          "page": 1,
+          "source_snippet": "Capital account, 1 October 2025",
+          "confidence": 0.9
+        },
+        "period_end": {
+          "value": "31 December 2025",
+          "page": 1,
+          "source_snippet": "For the quarter ended 31 December 2025",
+          "confidence": 0.95
+        },
+        "opening_balance": {
+          "value": "USD 5,000,000.00",
+          "page": 1,
+          "source_snippet": "Capital account, 1 October 2025 USD 5,000,000.00",
+          "confidence": 0.95
+        },
+        "contributions": {
+          "value": "250,000.00",
+          "page": 1,
+          "source_snippet": "Subscriptions 250,000.00",
+          "confidence": 0.95
+        },
+        "withdrawals": {
+          "value": "-",
+          "page": 1,
+          "source_snippet": "Redemptions -",
+          "confidence": 0.85
+        },
+        "pnl": {
+          "value": "71,830.00",
+          "page": 1,
+          "source_snippet": "Net profit / (loss) allocated 71,830.00",
+          "confidence": 0.95
+        },
+        "fees": {
+          "value": "(30,010.00)",
+          "page": 1,
+          "source_snippet": "Management fee (19,560.00)\nIncentive allocation (10,450.00)",
+          "confidence": 0.85
+        },
+        "closing_balance": {
+          "value": "USD 5,291,820.00",
+          "page": 1,
+          "source_snippet": "Capital account, 31 December 2025 USD 5,291,820.00",
+          "confidence": 0.95
+        },
+        "holdings": []
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "text": "BRIGHTLINE FUND SERVICES (CAYMAN) LTD.\nStatement of Partner's Capital Account\nKestrel Quant Equity Fund LP\nFor the quarter ended 31 December 2025\nLimited Partner: Cedar Ridge Partners LP\nInvestor ID: CRP-0042\nCapital account, 1 October 2025 | USD 5,000,000.00\nSubscriptions | 250,000.00\nRedemptions | -\nNet profit / (loss) allocated | 71,830.00\nManagement fee | (19,560.00)\nIncentive allocation | (10,450.00)\nCapital account, 31 December 2025 | USD 5,291,820.00\nQuarterly net return to the Limited Partner: 1.37%. Ownership percentage of the Fund: 1.28%.\nThis statement is unaudited. Fictional fund, administrator and investor."
+      }
+    ],
+    "extra": {
+      "fees_components": "Management fee (19,560.00); Incentive allocation (10,450.00)",
+      "ownership_percentage": "Ownership percentage of the Fund: 1.28%",
+      "reporting_period": "For the quarter ended 31 December 2025",
+      "audit_status": "This statement is unaudited."
+    }
+  }
+}

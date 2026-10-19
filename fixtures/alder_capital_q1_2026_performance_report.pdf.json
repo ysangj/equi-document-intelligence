@@ -1,0 +1,218 @@
+{
+  "fixture_format": 1,
+  "source_file": "alder_capital_q1_2026_performance_report.pdf",
+  "source_md5": "0fcbded86d801f97aac8b17a783ecd5c",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7352,
+  "output_tokens": 2427,
+  "latency_ms": 26793,
+  "generated_at": "2026-10-16T23:57:40Z",
+  "extraction": {
+    "document_type": "performance_report",
+    "document_type_confidence": 0.95,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Alder Asia Fund",
+          "page": 1,
+          "source_snippet": "Alder Asia Fund 1.10%",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Alder Capital",
+          "page": 1,
+          "source_snippet": "Alder Capital — Quarterly Performance Report, Q1 2026",
+          "confidence": 0.85
+        },
+        "strategy": null,
+        "currency": null,
+        "as_of_date": {
+          "value": "Q1 2026",
+          "page": 1,
+          "source_snippet": "Quarterly Performance Report, Q1 2026",
+          "confidence": 0.9
+        },
+        "aum": null,
+        "returns": [
+          {
+            "period": "Jan",
+            "value": {
+              "value": "1.10%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund 1.10%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Feb",
+            "value": {
+              "value": "0.40%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund 1.10% 0.40%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Mar",
+            "value": {
+              "value": "-1.25%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund 1.10% 0.40% -1.25%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Q1",
+            "value": {
+              "value": "0.24%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund 1.10% 0.40% -1.25% 0.24%",
+              "confidence": 0.95
+            },
+            "return_type": "QTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "YTD",
+            "value": {
+              "value": "0.24%",
+              "page": 1,
+              "source_snippet": "Alder Asia Fund 1.10% 0.40% -1.25% 0.24%",
+              "confidence": 0.95
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "Class A",
+            "page": 1,
+            "source_snippet": "All figures net of fees, Class A.",
+            "confidence": 0.85
+          },
+          "net_exposure": {
+            "value": "18%",
+            "page": 1,
+            "source_snippet": "net exposure reduced to 18%",
+            "confidence": 0.85
+          }
+        }
+      },
+      {
+        "fund_name": {
+          "value": "Alder Dubai Fund",
+          "page": 1,
+          "source_snippet": "Alder Dubai Fund 0.48%",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Alder Capital",
+          "page": 1,
+          "source_snippet": "Alder Capital — Quarterly Performance Report, Q1 2026",
+          "confidence": 0.85
+        },
+        "strategy": null,
+        "currency": null,
+        "as_of_date": {
+          "value": "Q1 2026",
+          "page": 1,
+          "source_snippet": "Quarterly Performance Report, Q1 2026",
+          "confidence": 0.9
+        },
+        "aum": null,
+        "returns": [
+          {
+            "period": "Jan",
+            "value": {
+              "value": "0.48%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund 0.48%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Feb",
+            "value": {
+              "value": "0.52%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund 0.48% 0.52%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Mar",
+            "value": {
+              "value": "0.37%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund 0.48% 0.52% 0.37%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Q1",
+            "value": {
+              "value": "1.38%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund 0.48% 0.52% 0.37% 1.38%",
+              "confidence": 0.95
+            },
+            "return_type": "QTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "YTD",
+            "value": {
+              "value": "1.38%",
+              "page": 1,
+              "source_snippet": "Alder Dubai Fund 0.48% 0.52% 0.37% 1.38%",
+              "confidence": 0.95
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "Class A",
+            "page": 1,
+            "source_snippet": "All figures net of fees, Class A.",
+            "confidence": 0.85
+          },
+          "spread_duration": {
+            "value": "under 4 years",
+            "page": 1,
+            "source_snippet": "spread duration kept under 4 years",
+            "confidence": 0.75
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Alder Capital — Quarterly Performance Report, Q1 2026\nPrepared for investors in Alder Capital funds. All figures net of fees, Class A.\nFund | Jan | Feb | Mar | Q1 / YTD\nAlder Asia Fund | 1.10% | 0.40% | -1.25% | 0.24%\nAlder Dubai Fund | 0.48% | 0.52% | 0.37% | 1.38%\nAsia: a difficult March after tariff headlines; net exposure reduced to 18%. Dubai: steady carry; spread duration kept under 4 years.\nFictional funds for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "reporting_period": "Q1 2026",
+      "returns_basis": "All figures net of fees, Class A.",
+      "disclaimer": "Fictional funds for demonstration purposes."
+    }
+  }
+}

@@ -1,0 +1,23 @@
+Content-Type: multipart/alternative; boundary="===============0049800979835898098=="
+MIME-Version: 1.0
+From: Northwind IR <ir@northwind-capital.example>
+To: investor.relations@example-allocator.com
+Subject: =?utf-8?q?Northwind_Macro_Fund_Ltd_=E2=80=93_January_2026_flash_estimate?=
+Date: Tue, 03 Feb 2026 14:05:00 +0000
+
+--===============0049800979835898098==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+<html><body style="font-family:Arial,sans-serif;font-size:14px">
+<p>Dear Investor,</p>
+<p>Please find below the <b>flash estimate</b> for Northwind Macro Fund Ltd (Class A USD) for January 2026:</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>Period</th><th>Net return (est.)</th></tr>
+<tr><td>Jan 2026</td><td>+1.89%</td></tr>
+<tr><td>YTD 2026</td><td>+1.89%</td></tr></table>
+<p>Gains came from front-end US rates and a short yen position. Final figures will follow in the monthly factsheet.</p>
+<p>Best regards,<br>Northwind Investor Relations</p>
+<p style="font-size:11px;color:#888">Fictional fund for demonstration purposes.</p></body></html>
+--===============0049800979835898098==--

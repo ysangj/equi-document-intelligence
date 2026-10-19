@@ -1,0 +1,118 @@
+{
+  "fixture_format": 1,
+  "source_file": "alder_dubai_fund_january2026.pdf",
+  "source_md5": "d070bd65b8ae30ff33701ad30371e876",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 7420,
+  "output_tokens": 1201,
+  "latency_ms": 9930,
+  "generated_at": "2026-10-16T23:57:32Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.9,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Alder Dubai Fund",
+          "page": 1,
+          "source_snippet": "Alder Dubai Fund",
+          "confidence": 0.95
+        },
+        "manager": {
+          "value": "Alder Capital Pte. Ltd.",
+          "page": 1,
+          "source_snippet": "Investment manager Alder Capital Pte. Ltd.",
+          "confidence": 0.95
+        },
+        "strategy": {
+          "value": "MENA credit",
+          "page": 1,
+          "source_snippet": "Strategy MENA credit",
+          "confidence": 0.95
+        },
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "USD 156.0mm",
+          "confidence": 0.85
+        },
+        "as_of_date": {
+          "value": "January 2026",
+          "page": 1,
+          "source_snippet": "Investor Report — January 2026",
+          "confidence": 0.95
+        },
+        "aum": {
+          "value": "USD 156.0mm",
+          "page": 1,
+          "source_snippet": "Net asset value\nUSD 156.0mm",
+          "confidence": 0.9
+        },
+        "returns": [
+          {
+            "period": "January 2026",
+            "value": {
+              "value": "+48 bps",
+              "page": 1,
+              "source_snippet": "Month (net of fees)\n+48 bps",
+              "confidence": 0.9
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Year to date",
+            "value": {
+              "value": "+48 bps",
+              "page": 1,
+              "source_snippet": "Year to date (net)\n+48 bps",
+              "confidence": 0.9
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "management_fee": {
+            "value": "1.25% p.a.",
+            "page": 1,
+            "source_snippet": "Management fee 1.25% p.a.",
+            "confidence": 0.95
+          },
+          "performance_fee": {
+            "value": "15% over a 5% hurdle",
+            "page": 1,
+            "source_snippet": "Incentive fee 15% over a 5% hurdle",
+            "confidence": 0.9
+          },
+          "redemption_terms": {
+            "value": "Quarterly with 90 days' notice; 25% investor-level gate",
+            "page": 1,
+            "source_snippet": "Redemptions Quarterly with 90 days' notice; 25% investor-level gate",
+            "confidence": 0.9
+          },
+          "share_class": {
+            "value": "Class A",
+            "page": 1,
+            "source_snippet": "net of all fees, Class A shares",
+            "confidence": 0.85
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "A L D E R C A P I TA L\nAlder Dubai Fund\nInvestor Report — January 2026\nMonth (net of fees)\n+48 bps\nYear to date (net)\n+48 bps\nNet asset value\nUSD 156.0mm\nFund information\nInvestment manager Alder Capital Pte. Ltd.\nStrategy MENA credit\nRedemptions Quarterly with 90 days' notice; 25% investor-level gate\nManagement fee 1.25% p.a.\nIncentive fee 15% over a 5% hurdle\nCommentary\nGulf sovereign and quasi-sovereign bonds were stable. Carry contributed most of the return;\nspread duration was kept below 4 years given rate uncertainty.\nPerformance in basis points, net of all fees, Class A shares. Fictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "returns_note": "Performance in basis points, net of all fees, Class A shares.",
+      "reporting_period": "January 2026",
+      "disclaimer": "Fictional fund for demonstration purposes."
+    }
+  }
+}

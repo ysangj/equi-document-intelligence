@@ -1,0 +1,181 @@
+{
+  "fixture_format": 1,
+  "source_file": "kestrel_factsheet_2026-03.pdf",
+  "source_md5": "5bfb744857465eb0887a46ec4a5a76ae",
+  "mime_type": "application/pdf",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 9207,
+  "output_tokens": 2591,
+  "latency_ms": 20130,
+  "generated_at": "2026-10-16T23:58:15Z",
+  "extraction": {
+    "document_type": "factsheet",
+    "document_type_confidence": 0.97,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Kestrel Quant Equity Fund LP",
+          "page": 1,
+          "source_snippet": "Kestrel Quant Equity Fund LP",
+          "confidence": 0.98
+        },
+        "manager": {
+          "value": "Kestrel Partners LLC",
+          "page": 1,
+          "source_snippet": "Monthly Factsheet · March 2026 · Kestrel Partners LLC",
+          "confidence": 0.9
+        },
+        "strategy": {
+          "value": "Systematic equity market neutral",
+          "page": 1,
+          "source_snippet": "Systematic equity market neutral.",
+          "confidence": 0.92
+        },
+        "currency": null,
+        "as_of_date": {
+          "value": "March 2026",
+          "page": 1,
+          "source_snippet": "Monthly Factsheet · March 2026",
+          "confidence": 0.95
+        },
+        "aum": {
+          "value": "$412.6mm",
+          "page": 1,
+          "source_snippet": "FUND AUM $412.6mm",
+          "confidence": 0.95
+        },
+        "returns": [
+          {
+            "period": "Jan 2026",
+            "value": {
+              "value": "+2.84%",
+              "page": 1,
+              "source_snippet": "Jan 2026 +2.84%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Feb 2026",
+            "value": {
+              "value": "-0.92%",
+              "page": 1,
+              "source_snippet": "Feb 2026 -0.92%",
+              "confidence": 0.95
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "Mar 2026",
+            "value": {
+              "value": "+1.35%",
+              "page": 1,
+              "source_snippet": "Mar 2026 +1.35%",
+              "confidence": 0.85
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "YTD",
+            "value": {
+              "value": "+3.27%",
+              "page": 1,
+              "source_snippet": "YTD % (NET) +3.27%",
+              "confidence": 0.85
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "sharpe": {
+            "value": "1.84",
+            "page": 1,
+            "source_snippet": "SHARPE (SINCE INCEPT.) 1.84",
+            "confidence": 0.9
+          },
+          "inception_date": {
+            "value": "March 2021",
+            "page": 1,
+            "source_snippet": "Inception March 2021",
+            "confidence": 0.95
+          },
+          "management_fee": {
+            "value": "1.5%",
+            "page": 1,
+            "source_snippet": "1.5% management",
+            "confidence": 0.93
+          },
+          "performance_fee": {
+            "value": "20%",
+            "page": 1,
+            "source_snippet": "20% performance",
+            "confidence": 0.9
+          },
+          "max_drawdown": {
+            "value": "-6.8%",
+            "page": 1,
+            "source_snippet": "-6.8%",
+            "confidence": 0.9
+          },
+          "volatility": {
+            "value": "7.6%",
+            "page": 2,
+            "source_snippet": "annualized volatility since inception 7.6%",
+            "confidence": 0.93
+          },
+          "correlation_msci_world": {
+            "value": "0.04",
+            "page": 2,
+            "source_snippet": "correlation to MSCI World 0.04",
+            "confidence": 0.92
+          },
+          "gross_exposure": {
+            "value": "2.9x",
+            "page": 2,
+            "source_snippet": "Gross exposure ended the month at 2.9x",
+            "confidence": 0.92
+          },
+          "target_volatility": {
+            "value": "8%",
+            "page": 1,
+            "source_snippet": "Target annualized volatility 8%",
+            "confidence": 0.9
+          },
+          "liquidity": {
+            "value": "Monthly, 30 days' notice",
+            "page": 1,
+            "source_snippet": "Liquidity Monthly, 30 days' notice",
+            "confidence": 0.93
+          },
+          "administrator": {
+            "value": "Brightline Fund Services",
+            "page": 1,
+            "source_snippet": "Administrator Brightline Fund Services",
+            "confidence": 0.95
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Kestrel Quant Equity Fund LP\nMonthly Factsheet · March 2026 · Kestrel Partners LLC\nMTD % (NET) | +1.35%\nYTD % (NET) | +3.27%\nFUND AUM | $412.6mm\nSHARPE (SINCE INCEPT.) | 1.84\nStrategy\nSystematic equity market neutral. Long/short US and European large caps using short-term reversal, earnings-revision and quality signals. Target annualized volatility 8%.\nMonthly Performance (MTD %, net of fees)\nMonth | MTD %\nJan 2026 | +2.84%\nFeb 2026 | -0.92%\nMar 2026 | +1.35%\nKey Terms\nInception | March 2021\nLiquidity | Monthly, 30 days' notice\nFees | 1.5% management / 20% performance\nAdministrator | Brightline Fund Services\nMax drawdown (since incept.) | -6.8%"
+      },
+      {
+        "page": 2,
+        "text": "Portfolio Manager Commentary\nMarch recovered most of February's drawdown. Earnings-revision signals contributed the bulk of returns, while the reversal sleeve was flat. Gross exposure ended the month at 2.9x.\nRisk metrics: annualized volatility since inception 7.6%; correlation to MSCI World 0.04.\nFor professional investors only. Past performance is not indicative of future results. Figures for the latest month are estimates until finalized by the administrator. Fictional fund for demonstration."
+      }
+    ],
+    "extra": {
+      "estimate": "Figures for the latest month (March 2026) are estimates until finalized by the administrator.",
+      "reporting_period": "March 2026",
+      "disclaimer": "Fictional fund for demonstration."
+    }
+  }
+}

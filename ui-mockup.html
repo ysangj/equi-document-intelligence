@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fund Doc Intelligence</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1b2430; --muted:#6b7684; --line:#e3e7ec;
+    --accent:#2f5bea; --accent-soft:#e8eefe; --ok:#1f8a4c; --ok-soft:#e5f5ec;
+    --warn:#b26a00; --warn-soft:#fff3df; --bad:#c23b3b; --bad-soft:#fde8e8;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif}
+  header{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  .top{display:flex;align-items:center;gap:16px;padding:12px 24px}
+  .brand{font-weight:700;font-size:15px;white-space:nowrap}
+  .brand span{color:var(--accent)}
+  .search{flex:1;max-width:520px;position:relative}
+  .search input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font:inherit}
+  .search::before{content:"⌕";position:absolute;left:11px;top:6px;color:var(--muted);font-size:16px}
+  .dd{display:none;position:absolute;top:40px;left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(20,30,50,.12);padding:8px 0}
+  .search:focus-within .dd{display:block}
+  .dd h6{margin:6px 14px 2px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .dd div{padding:5px 14px}
+  .dd mark{background:#fff1a8;padding:0 1px}
+  .dd small{color:var(--muted)}
+  .conn{margin-left:auto;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px}
+  nav{display:flex;gap:4px;padding:0 24px}
+  nav button{border:0;background:none;padding:10px 14px;font:inherit;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer}
+  nav button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+  nav .badge{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:0 7px;font-size:11.5px;margin-left:6px}
+  .progress{display:flex;align-items:center;gap:12px;padding:8px 24px;background:var(--accent-soft);font-size:12.5px;color:#28408f}
+  .bar{flex:0 0 220px;height:6px;background:#cfd9fb;border-radius:4px;overflow:hidden}
+  .bar i{display:block;height:100%;width:85%;background:var(--accent)}
+  main{padding:20px 24px 40px;max-width:1280px}
+  section{display:none} section.on{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+  .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{border:0;background:var(--panel);padding:6px 12px;font:inherit;cursor:pointer}
+  .seg button.on{background:var(--ink);color:#fff}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:var(--panel);font-size:12.5px;color:var(--ink)}
+  .chip b{font-weight:600}
+  .spacer{flex:1}
+  .btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:#fafbfc}
+  td.num{font-variant-numeric:tabular-nums;text-align:right}
+  th.num{text-align:right}
+  tbody tr{cursor:pointer} tbody tr:hover{background:#f8faff}
+  .pos{color:var(--ok)} .neg{color:var(--bad)}
+  .st{border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600}
+  .st.ok{background:var(--ok-soft);color:var(--ok)}
+  .st.rev{background:var(--warn-soft);color:var(--warn)}
+  .st.cf{background:var(--bad-soft);color:var(--bad)}
+  .st.proc{background:var(--accent-soft);color:var(--accent)}
+  .st.fail{background:var(--bad-soft);color:var(--bad)}
+  .doc{color:var(--accent)}
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+  .side{padding:16px}
+  .side h4{margin:0 0 4px}
+  .side .k{color:var(--muted);font-size:12px;margin-top:12px}
+  .snip{font-family:var(--mono);font-size:12.5px;background:#fafbfc;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:10px;margin-top:4px;white-space:pre-wrap}
+  .snip mark{background:#fff1a8}
+  .ask{padding:18px}
+  .ask textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;min-height:56px;resize:vertical}
+  .sugg{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+  .sugg .chip{cursor:pointer;color:var(--accent);border-color:#cdd8fb;background:var(--accent-soft)}
+  .answer{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+  .q{font-weight:600;margin-bottom:8px}
+  .cite{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:0 6px;font-size:11.5px;font-weight:700;vertical-align:1px;margin-left:2px;cursor:pointer}
+  .cites{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .cites .card{padding:12px}
+  .cites h5{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  pre{font-family:var(--mono);font-size:12px;background:#0f1729;color:#dbe4ff;border-radius:8px;padding:10px;overflow:auto;margin:6px 0 0}
+  details{margin-top:14px} summary{cursor:pointer;color:var(--muted)}
+  .steps{font-family:var(--mono);font-size:12px;color:var(--muted);margin:8px 0 0;padding-left:18px}
+  .mini td,.mini th{padding:5px 8px;font-size:12px}
+  .stats{display:flex;gap:12px;margin-bottom:14px}
+  .stat{flex:1;padding:12px 14px}
+  .stat b{display:block;font-size:20px}
+  .stat span{color:var(--muted);font-size:12px}
+  .rev-item{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px;border-bottom:1px solid var(--line)}
+  .rev-item:last-child{border-bottom:0}
+  .rev-item .why{color:var(--muted);font-size:12.5px}
+  .choices{display:flex;gap:8px}
+  .banner{font-size:12px;color:var(--muted);margin:0 0 12px}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}.cites{grid-template-columns:1fr}.conn{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">Fund<span>Doc</span> Intelligence</div>
+    <div class="search">
+      <input placeholder="Search funds, accounts, documents, text…" value="duration">
+      <div class="dd">
+        <h6>Funds</h6>
+        <div>Meridian Rates RV Fund <small>· 3 docs</small></div>
+        <h6>Passages</h6>
+        <div>“…we reduced <mark>duration</mark> to 2.1y ahead of the March FOMC…” <small>· meridian_mar26_factsheet.pdf p.2</small></div>
+        <div>“…portfolio <mark>duration</mark> remains neutral vs benchmark…” <small>· harbor_credit_q1_letter.html</small></div>
+        <h6>Documents</h6>
+        <div>meridian_<mark>duration</mark>_update.eml <small>· email</small></div>
+      </div>
+    </div>
+    <div class="conn"><span><span class="dot"></span>sj.demo@gmail.com</span> · <span>📁 Fund Docs</span> · <span>synced 12s ago</span> <button class="btn">Sync now</button></div>
+  </div>
+  <nav>
+    <button class="on" data-t="data">Data</button>
+    <button data-t="ask">Ask</button>
+    <button data-t="ing">Ingestion</button>
+    <button data-t="rev">Review <span class="badge">4</span></button>
+  </nav>
+  <div class="progress"><div class="bar"><i></i></div>17 / 20 documents processed · 2 processing · 1 failed</div>
+</header>
+
+<main>
+  <!-- DATA -->
+  <section id="data" class="on">
+    <div class="layout">
+      <div class="card">
+        <div class="filters">
+          <div class="seg"><button class="on">Funds &amp; Returns</button><button>Statements</button></div>
+          <span class="chip">Fund: <b>All (6)</b> ▾</span>
+          <span class="chip">Period: <b>Jan 2026 – Mar 2026</b> ▾</span>
+          <span class="chip">Type: <b>MTD, net</b> ▾</span>
+          <span class="chip">Status: <b>All</b> ▾</span>
+          <span class="spacer"></span>
+          <button class="btn">Export CSV</button>
+        </div>
+        <table>
+          <thead><tr><th>Fund</th><th>Manager</th><th>Strategy</th><th>Period</th><th class="num">Return</th><th>Status</th><th>Source</th></tr></thead>
+          <tbody>
+            <tr data-p="0"><td>Kestrel Quant Equity</td><td>Kestrel Partners</td><td>Equity mkt neutral</td><td>Jan 2026</td><td class="num pos">+2.84%</td><td><span class="st ok">ok</span></td><td class="doc">kestrel_jan26.pdf</td></tr>
+            <tr data-p="1"><td>Northwind Global Macro</td><td>Northwind Capital</td><td>Global macro</td><td>Jan 2026</td><td class="num pos">+1.92%</td><td><span class="st cf">conflict</span></td><td class="doc">northwind_jan26.pdf</td></tr>
+            <tr data-p="2"><td>Harbor Credit Opportunities</td><td>Harbor AM</td><td>Credit</td><td>Jan 2026</td><td class="num pos">+0.71%</td><td><span class="st ok">ok</span></td><td class="doc">harbor_admin_export.csv</td></tr>
+            <tr data-p="3"><td>Meridian Rates RV</td><td>Meridian</td><td>Fixed income RV</td><td>Jan 2026</td><td class="num neg">−0.36%</td><td><span class="st ok">ok</span></td><td class="doc">meridian_jan26.pdf</td></tr>
+            <tr><td>Alder Asia Fund</td><td>Alder Capital</td><td>Asia L/S</td><td>Jan 2026</td><td class="num pos">+1.10%</td><td><span class="st rev">review</span></td><td class="doc">alder_asia_jan26.pdf</td></tr>
+            <tr><td>Alder Dubai Fund</td><td>Alder Capital</td><td>MENA credit</td><td>Jan 2026</td><td class="num pos">+0.48%</td><td><span class="st ok">ok</span></td><td class="doc">alder_dubai_jan26.pdf</td></tr>
+            <tr><td>Kestrel Quant Equity</td><td>Kestrel Partners</td><td>Equity mkt neutral</td><td>Feb 2026</td><td class="num neg">−0.92%</td><td><span class="st ok">ok</span></td><td class="doc">kestrel_feb26.pdf</td></tr>
+            <tr><td>Northwind Global Macro</td><td>Northwind Capital</td><td>Global macro</td><td>Feb 2026</td><td class="num pos">+0.55%</td><td><span class="st ok">ok</span></td><td class="doc">nw_update_feb.eml</td></tr>
+            <tr><td>Meridian Rates RV</td><td>Meridian</td><td>Fixed income RV</td><td>Feb 2026</td><td class="num pos">+0.21%</td><td><span class="st ok">ok</span></td><td class="doc">meridian_feb26.pdf</td></tr>
+            <tr><td>Harbor Credit Opportunities</td><td>Harbor AM</td><td>Credit</td><td>Feb 2026</td><td class="num pos">+0.64%</td><td><span class="st ok">ok</span></td><td class="doc">harbor_admin_export.csv</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="card side" id="prov">
+        <h4 id="pv-title">Kestrel Quant Equity · Jan 2026</h4>
+        <div style="font-size:22px;font-weight:700" class="pos" id="pv-val">+2.84%</div>
+        <div class="k">Source</div>
+        <div class="doc" id="pv-doc">kestrel_jan26.pdf · page 1 ↗</div>
+        <div class="k">Snippet</div>
+        <div class="snip" id="pv-snip">Monthly Performance (Net)
+Jan  <mark>2.84%</mark>   Feb  —   YTD  2.84%</div>
+        <div class="k">Extraction</div>
+        <div id="pv-meta">confidence 0.97 · return_type MTD · net · claude-sonnet · prompt v3</div>
+        <div class="k">Checks</div>
+        <div id="pv-chk">✓ snippet found on page &nbsp; ✓ range &nbsp; ✓ YTD reconciles</div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ASK -->
+  <section id="ask">
+    <div class="card ask">
+      <textarea>Which fund had the best January return, and what did the manager say about it?</textarea>
+      <div class="sugg">
+        <span class="chip">Which fund had the best January return?</span>
+        <span class="chip">What did managers say about rate risk?</span>
+        <span class="chip">Latest NAV for each account</span>
+        <span class="chip">List all Alder funds</span>
+      </div>
+      <div class="answer">
+        <div class="q">Answer</div>
+        <p><b>Kestrel Quant Equity</b> had the best January 2026 return at <b>+2.84%</b> net <span class="cite">1</span>, ahead of Northwind Global Macro at +1.92% <span class="cite">1</span> (Northwind's figure is flagged as a conflict between two documents).</p>
+        <p>Kestrel attributed the month to its short-term reversal signals in US large caps and noted gross exposure was trimmed late in the month as dispersion fell <span class="cite">2</span>.</p>
+        <div class="cites">
+          <div class="card">
+            <h5>1 · SQL result</h5>
+            <pre>SELECT fund, value FROM v_returns
+WHERE period_end = '2026-01-31'
+  AND return_type = 'MTD' AND net_gross = 'net'
+ORDER BY value DESC LIMIT 200;</pre>
+            <table class="mini" style="margin-top:8px"><tr><th>fund</th><th class="num">value</th></tr>
+              <tr><td>Kestrel Quant Equity</td><td class="num">2.84</td></tr>
+              <tr><td>Northwind Global Macro</td><td class="num">1.92</td></tr>
+              <tr><td>Alder Asia Fund</td><td class="num">1.10</td></tr></table>
+          </div>
+          <div class="card">
+            <h5>2 · Passage</h5>
+            <div class="snip" style="margin-top:0">“…January gains came primarily from short-term reversal signals in US large caps. As dispersion compressed in the final week, we reduced gross exposure from 3.1x to 2.6x…”</div>
+            <div class="doc" style="margin-top:8px;font-size:12.5px">kestrel_jan26.pdf · page 2 ↗</div>
+          </div>
+        </div>
+        <details><summary>How I got this · 2 tool calls · 6.4s</summary>
+          <ol class="steps">
+            <li>query_sql → 6 rows</li>
+            <li>search_documents("Kestrel January performance commentary", fund="Kestrel Quant Equity") → 8 passages (FTS + vector, RRF)</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- INGESTION -->
+  <section id="ing">
+    <div class="stats">
+      <div class="card stat"><b>17</b><span>done</span></div>
+      <div class="card stat"><b>2</b><span>processing</span></div>
+      <div class="card stat"><b>1</b><span>failed</span></div>
+      <div class="card stat"><b>4</b><span>needs review</span></div>
+      <div class="card stat"><b>$0.41</b><span>tokens · this folder</span></div>
+    </div>
+    <div class="card">
+      <div class="filters"><b>Fund Docs</b><span class="spacer"></span><button class="btn">Full reconcile</button><button class="btn primary">Sync now</button></div>
+      <table>
+        <thead><tr><th>File</th><th>Detected type</th><th>Status</th><th class="num">Attempts</th><th class="num">Tokens</th><th>Processed</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>alder_dubai_mar26.pdf</td><td>—</td><td><span class="st proc">processing</span></td><td class="num">1</td><td class="num">—</td><td>—</td><td></td></tr>
+          <tr><td>custodian_stmt_feb26.pdf</td><td>—</td><td><span class="st proc">processing</span></td><td class="num">1</td><td class="num">—</td><td>—</td><td></td></tr>
+          <tr><td>scan_northwind_q4.pdf</td><td>factsheet</td><td><span class="st fail">failed</span></td><td class="num">3</td><td class="num">—</td><td style="color:var(--bad)">429 rate limited</td><td><button class="btn">Reprocess</button></td></tr>
+          <tr><td>northwind_jan26.pdf</td><td>factsheet</td><td><span class="st rev">needs review</span></td><td class="num">1</td><td class="num">9.8k</td><td>2 min ago</td><td><button class="btn">Reprocess</button></td></tr>
+          <tr><td>kestrel_jan26.pdf</td><td>factsheet</td><td><span class="st ok">done</span></td><td class="num">1</td><td class="num">7.2k</td><td>3 min ago</td><td><button class="btn">Reprocess</button></td></tr>
+          <tr><td>harbor_admin_export.csv</td><td>performance_report</td><td><span class="st ok">done</span></td><td class="num">1</td><td class="num">3.1k</td><td>3 min ago</td><td><button class="btn">Reprocess</button></td></tr>
+          <tr><td>acme_family_stmt_jan26.pdf</td><td>account_statement</td><td><span class="st ok">done</span></td><td class="num">1</td><td class="num">11.4k</td><td>4 min ago</td><td><button class="btn">Reprocess</button></td></tr>
+          <tr><td>nw_update_feb.eml</td><td>email</td><td><span class="st ok">done</span></td><td class="num">1</td><td class="num">2.6k</td><td>4 min ago</td><td><button class="btn">Reprocess</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section id="rev">
+    <p class="banner">Values here are stored but flagged. Decisions persist across reprocessing.</p>
+    <div class="card">
+      <div class="rev-item"><span class="st cf">conflict</span>
+        <div><b>Northwind Global Macro · Jan 2026 MTD net</b><div class="why">northwind_jan26.pdf p.1 says <b>+1.92%</b> · nw_update_jan.eml says <b>+1.89%</b></div></div>
+        <div class="choices"><button class="btn">Use 1.92%</button><button class="btn">Use 1.89%</button></div></div>
+      <div class="rev-item"><span class="st rev">alias</span>
+        <div><b>“Alder Asia Fund SPC – Class A”</b> looks like <b>Alder Asia Fund</b><div class="why">fuzzy match 0.91 · alder_asia_feb26.pdf</div></div>
+        <div class="choices"><button class="btn primary">Same fund</button><button class="btn">Different fund</button></div></div>
+      <div class="rev-item"><span class="st rev">YTD mismatch</span>
+        <div><b>Meridian Rates RV · 2026 YTD</b><div class="why">Monthly returns compound to −0.15%, stated YTD is +0.15% (sign?) · meridian_feb26.pdf p.1</div></div>
+        <div class="choices"><button class="btn">Accept</button><button class="btn">Edit</button></div></div>
+      <div class="rev-item"><span class="st rev">roll-forward</span>
+        <div><b>Acme Family Office · Jan 2026 statement</b><div class="why">Opening 12.40mm + contrib 0.50mm − withdr 0 + P&amp;L 0.18mm = 13.08mm ≠ closing 13.10mm · acme_family_stmt_jan26.pdf p.1</div></div>
+        <div class="choices"><button class="btn">Accept</button><button class="btn">Edit</button></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); document.getElementById(b.dataset.t).classList.add('on');
+  });
+  const P=[
+    ["Kestrel Quant Equity · Jan 2026","+2.84%","pos","kestrel_jan26.pdf · page 1 ↗","Monthly Performance (Net)\nJan  <mark>2.84%</mark>   Feb  —   YTD  2.84%","confidence 0.97 · MTD · net · claude-sonnet · prompt v3","✓ snippet found on page &nbsp; ✓ range &nbsp; ✓ YTD reconciles"],
+    ["Northwind Global Macro · Jan 2026","+1.92%","pos","northwind_jan26.pdf · page 1 ↗","Perf. (net) Jan-26: <mark>1.92%</mark>","confidence 0.93 · MTD · net · claude-sonnet · prompt v3","⚠ conflicts with nw_update_jan.eml (+1.89%)"],
+    ["Harbor Credit Opportunities · Jan 2026","+0.71%","pos","harbor_admin_export.csv · row 14 ↗","fund_id,period,net_ret\nHCO-A,2026-01,<mark>0.0071</mark>","confidence 0.99 · MTD · net · claude-sonnet · prompt v3","✓ range &nbsp; ✓ YTD reconciles"],
+    ["Meridian Rates RV · Jan 2026","−0.36%","neg","meridian_jan26.pdf · page 1 ↗","Net Return  January  <mark>(0.36)%</mark>","confidence 0.95 · MTD · net · claude-sonnet · prompt v3","✓ snippet found on page &nbsp; ✓ range"]
+  ];
+  document.querySelectorAll('tbody tr[data-p]').forEach(r=>r.onclick=()=>{
+    const p=P[r.dataset.p];
+    pv('title',p[0]); pv('val',p[1]); document.getElementById('pv-val').className=p[2];
+    pv('doc',p[3]); pv('snip',p[4]); pv('meta',p[5]); pv('chk',p[6]);
+  });
+  function pv(k,v){document.getElementById('pv-'+k).innerHTML=v}
+</script>
+</body>
+</html>

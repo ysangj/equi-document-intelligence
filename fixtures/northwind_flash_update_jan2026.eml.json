@@ -1,0 +1,85 @@
+{
+  "fixture_format": 1,
+  "source_file": "northwind_flash_update_jan2026.eml",
+  "source_md5": "9a529124015f04fdd2a8c4209e31028a",
+  "mime_type": "message/rfc822",
+  "model": "claude-opus-5-5",
+  "prompt_version": "2026-10-16.3",
+  "input_tokens": 5949,
+  "output_tokens": 957,
+  "latency_ms": 7608,
+  "generated_at": "2026-10-16T23:58:24Z",
+  "extraction": {
+    "document_type": "email",
+    "document_type_confidence": 0.95,
+    "funds": [
+      {
+        "fund_name": {
+          "value": "Northwind Macro Fund Ltd",
+          "page": 1,
+          "source_snippet": "flash estimate for Northwind Macro Fund Ltd (Class A USD)",
+          "confidence": 0.95
+        },
+        "manager": null,
+        "strategy": null,
+        "currency": {
+          "value": "USD",
+          "page": 1,
+          "source_snippet": "Northwind Macro Fund Ltd (Class A USD)",
+          "confidence": 0.8
+        },
+        "as_of_date": {
+          "value": "January 2026",
+          "page": 1,
+          "source_snippet": "Northwind Macro Fund Ltd (Class A USD) for January 2026",
+          "confidence": 0.9
+        },
+        "aum": null,
+        "returns": [
+          {
+            "period": "Jan 2026",
+            "value": {
+              "value": "+1.89%",
+              "page": 1,
+              "source_snippet": "Jan 2026 +1.89%",
+              "confidence": 0.85
+            },
+            "return_type": "MTD",
+            "net_gross": "net"
+          },
+          {
+            "period": "YTD 2026",
+            "value": {
+              "value": "+1.89%",
+              "page": 1,
+              "source_snippet": "YTD 2026 +1.89%",
+              "confidence": 0.85
+            },
+            "return_type": "YTD",
+            "net_gross": "net"
+          }
+        ],
+        "other_metrics": {
+          "share_class": {
+            "value": "Class A USD",
+            "page": 1,
+            "source_snippet": "Northwind Macro Fund Ltd (Class A USD)",
+            "confidence": 0.9
+          }
+        }
+      }
+    ],
+    "statements": [],
+    "pages": [
+      {
+        "page": 1,
+        "text": "Subject: Northwind Macro Fund Ltd – January 2026 flash estimate\nFrom: Northwind IR <ir@northwind-capital.example>\nDate: Tue, 03 Feb 2026 14:05:00 +0000\n\nDear Investor,\nPlease find below the flash estimate for Northwind Macro Fund Ltd (Class A USD) for January 2026:\nPeriod | Net return (est.)\nJan 2026 | +1.89%\nYTD 2026 | +1.89%\nGains came from front-end US rates and a short yen position. Final figures will follow in the monthly factsheet.\nBest regards,\nNorthwind Investor Relations\nFictional fund for demonstration purposes."
+      }
+    ],
+    "extra": {
+      "estimate": "Jan 2026 and YTD 2026 returns (+1.89%) are flash estimates; final figures to follow in the monthly factsheet.",
+      "document_date": "Tue, 03 Feb 2026 14:05:00 +0000",
+      "commentary": "Gains came from front-end US rates and a short yen position."
+    }
+  }
+}
