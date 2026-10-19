@@ -19,6 +19,7 @@ git clone https://github.com/ysangj/equi-document-intelligence.git && cd equi-do
 cp .env.example .env      # leave every key empty
 ./start.sh                # macOS: or double-click start.command
 ```
+Or run `./scripts/init_env.sh --demo` instead of the `cp`: it creates `.env` for demo mode and generates the local secrets.
 
 The browser opens at **http://localhost:4200**. With no Google client ID set, the app runs in **demo mode**: it watches the local `./sample_docs` folder (21 synthetic documents) instead of Drive. With no Anthropic key it loads the committed Claude extractions in `./fixtures/`, so Data, Search and Review work fully offline. Ask is disabled until you add an Anthropic key.
 
@@ -56,6 +57,49 @@ You create your own OAuth client; no Google credentials ship with this repo. The
    - **Create**, then copy the **Client ID** and **Client secret**.
 
 ### 3. Fill in `.env`
+**Recommended: run the setup script.** It prepares `.env` for you, and it never prints a secret value.
+```bash
+./scripts/init_env.sh
+```
+Have two things ready: your **Anthropic API key**, and the **client JSON** you downloaded in step 2.4 (**Google Auth Platform → Clients → your client → Download JSON**, usually named `client_secret_<id>.apps.googleusercontent.com.json`). The script then:
+
+1. **Checks git safety.** It confirms `.env` and its backups are git-ignored and that `.env` isn't tracked. If either check fails, it stops.
+2. **Creates or updates `.env`.** A missing `.env` is created from `.env.example`. An existing one is updated in place, and a backup is saved to `.env.bak.<timestamp>` first, but only if something actually changes.
+3. **Step 1/4, Anthropic key.** Paste the key; typing is hidden. A new key is checked with one call to Anthropic (`valid` / `rejected` / `could not check`). A valid key still needs credits. Press Enter to keep a key that's already set.
+4. **Step 2/4, Google client.** Pick one:
+   1. Path to the client JSON (drag the file into the terminal, or use Tab to complete the path)
+   2. Type the client ID and secret (the secret is hidden)
+   3. Skip, which gives demo mode with no Google sign-in
+   4. Keep the current client (the default when one is set)
+
+   From the JSON it reads `client_id` and `client_secret`, and checks that `redirect_uris` contains exactly `http://localhost:8000/api/auth/google/callback`. It warns, and shows the console fix, if the redirect URI is wrong or the client isn't a **Web application** client.
+5. **Step 3/4, local secrets.** It generates `FERNET_KEY` and `SESSION_SECRET` if they're empty. An existing `FERNET_KEY` is **kept**, because changing it disconnects Google Drive (see below).
+6. **Step 4/4, Postgres port.** If the configured Postgres port (`POSTGRES_PORT`, default 5432) is taken by another program, it offers a free port (e.g. 55432) and updates `POSTGRES_PORT` and both database URLs to match.
+7. **Saves and summarizes.** It writes `.env` with owner-only permissions (`600`) and prints a table of key names and their status (`set`, `kept`, `generated`, `empty (demo)` or `missing`), never the values. It also shows the mode it detected (Drive, demo with fixtures, or demo with Claude) and the next step: `./start.sh`.
+
+**Non-interactive** (for scripted demos or CI). Secrets are passed as **file paths**, never as values on the command line, so they don't show up in `ps` or shell history:
+```bash
+# Drive mode: key saved in a file, plus Google's downloaded client JSON
+./scripts/init_env.sh --yes \
+    --anthropic-key-file ~/secrets/anthropic_key.txt \
+    --google-client-json ~/Downloads/client_secret_<id>.apps.googleusercontent.com.json
+
+# Demo mode: no keys at all
+./scripts/init_env.sh --demo --yes
+```
+| Option | Effect |
+|---|---|
+| `--anthropic-key-file PATH` | Read the Anthropic key from a file (or set `ANTHROPIC_API_KEY` in the environment) |
+| `--google-client-json PATH` | Read the client ID and secret from Google's downloaded JSON |
+| `--demo` | Skip Google (demo mode). On an existing `.env` it clears `GOOGLE_CLIENT_ID`/`SECRET`; the backup keeps the old values |
+| `--yes` | Accept every default without asking; implied when stdin isn't a terminal |
+| `--no-validate` | Don't call Anthropic to check the key |
+| `--rotate-keys` | Generate a new `FERNET_KEY` and `SESSION_SECRET`. **This disconnects Google Drive**; you'll need to connect again. |
+| `--help` | Show all options |
+
+**Re-running it is safe.** Pressing Enter at every prompt changes nothing and makes no backup. Only the values you enter are replaced. Avoid `--demo` and `--rotate-keys` on a working setup unless you mean to clear Google or reconnect Drive. The previous values are kept in `.env.bak.<timestamp>`, which is git-ignored and readable only by you.
+
+**Or edit `.env` by hand:**
 ```bash
 cp .env.example .env            # if you haven't already
 python3.12 scripts/gen_keys.py  # prints FERNET_KEY and SESSION_SECRET
