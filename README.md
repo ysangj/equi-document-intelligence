@@ -228,41 +228,34 @@ The api and worker hold **no state in memory** between requests or iterations. E
 5. **Index for retrieval.** The document's text is split into chunks, stored with a full-text vector, and embedded locally. See the next section.
 
 ### How RAG works: indexing on the worker side
-Retrieval-augmented generation has two halves. The **worker** builds the index when a document is ingested, and the **api** searches that index at question time. The worker side runs right after extraction, in five steps.
+Right after a document is extracted, the worker splits its text into chunks, embeds each one locally, and stores them in Postgres. At question time, Ask searches these chunks.
 
-**1. Pick the text to index.** Each document's text is stored in `documents.text_content`, one string per page, separated by form-feed characters (`\f`):
-| Document | Where the text comes from |
+**1. Chunking: by page, then paragraph**
+- **One page at a time.** A chunk never spans two pages, so every cited passage has an exact page number.
+- **Paragraphs packed up to about 500 tokens**, which fits the embedding model's 512-token limit.
+- **About 50 tokens of overlap** between neighbouring chunks, so a sentence on a boundary isn't cut in half.
+- **CSVs are chunked by groups of rows, with the header repeated in every chunk**, so values stay next to their column names.
+- Scanned PDFs use the page text Claude transcribed during extraction.
+
+*The 21 sample documents produce 24 chunks; most factsheet pages fit in a single chunk.*
+
+**2. Embedding: local, no API key**
+| What | Detail |
 |---|---|
-| PDF with a text layer | Extracted with PyMuPDF (exact, page by page) |
-| Scanned / image-only PDF | Claude's per-page transcription, returned in the same extraction call (`pages[]` in the schema) |
-| HTML / `.eml` | The HTML body as text |
-| CSV / Google Sheet | The raw CSV text |
+| Model | `BAAI/bge-small-en-v1.5` via **fastembed** (ONNX, runs on CPU) |
+| Vector | 384 dimensions, cosine similarity |
+| Stored in | `document_chunks.embedding` (pgvector, HNSW index), next to a full-text `tsvector` column |
+| Cost | Free and offline once the ~65 MB model is cached in `./.cache/fastembed` |
 
-The same text is also used to check that each extracted value's snippet exists in the document, so search and provenance share one source.
+Chunks are keyword-searchable as soon as the extraction commits. Embeddings are added right after, and if embedding fails it's retried every 10 s. Search indexing never blocks or fails extraction.
 
-**2. Chunk it** (`app/search/chunking.py`, a pure function with unit tests). The goal is pieces small enough to embed well and to cite precisely, but large enough to carry context.
-- **Page first.** A chunk never spans two pages, so every passage Ask cites has an exact page number.
-- **Then paragraph.** Within a page, the text is split on blank lines. Paragraphs are packed greedily into a chunk until it reaches about **500 tokens**, which keeps it under the 512-token window of `bge-small`.
-- **Overlap.** Each new chunk starts with the last **~50 tokens** of the previous one, so a sentence that falls on a boundary is still searchable whole.
-- **Oversized pieces.** A paragraph longer than 500 tokens is split at sentence ends, and a sentence that is still too long is split into word windows with the same overlap.
-- **CSVs are chunked by row groups.** Rows are added until the chunk reaches the target, and **the header line is repeated at the top of every chunk**, so a row like `1/31/2026,-0.36,-0.15` is always stored next to `Month End,Return (Net) %,Return (Gross) %`. CSV chunks have no page number.
-- **Token counting** is a cheap estimate (words plus punctuation), close to the embedding model's own WordPiece count for this kind of text.
-
-**3. Store chunks, in the same transaction as the extracted values.** Inside the extraction job, `document_chunks` rows (`document_id`, `page`, `chunk_index`, `text`) are written in a savepoint. Postgres fills `tsv` automatically (a generated `to_tsvector('english', text)` column with a GIN index), so the chunks are **keyword-searchable as soon as the job commits**. `embedding` starts empty. If chunking fails, only the savepoint rolls back: the document still commits as `done` / `needs_review` with `search_indexed = false`, because search indexing must never block or fail structured extraction.
-
-**4. Embed, after the commit.** The job thread then embeds the new chunks locally with **fastembed** (`BAAI/bge-small-en-v1.5`, ONNX on CPU, 384 dimensions, batches of 32). There's no API key and no network call once the model is cached in `./.cache/fastembed`. The vectors go into `document_chunks.embedding` (`vector(384)`, HNSW index with cosine distance), together with the `embedding_model` name, in a short transaction. `search_indexed` becomes `true` once every chunk has a vector from the current model.
-- A worker thread checks every **10 s** for documents that aren't fully indexed and retries them. This covers embedding failures, a model that's still downloading, or a document briefly locked by another job.
-- Embedding happens outside the database transaction, so a slow model never holds locks.
-
-**5. Re-index only when something changed.**
-- **New file version** (different checksum): new chunks and embeddings for the new version. The old version is hidden from search along with its values.
+**3. Re-indexing: only when something changed**
+- **New file version** (different checksum): new chunks and embeddings. The old version is hidden from search along with its values.
 - **Reprocess with identical text:** existing chunks and embeddings are kept, with no re-embedding.
-- **`EMBEDDING_MODEL` changed:** chunks carrying another model's name are re-embedded automatically, without re-extracting anything.
-- **Removed file:** its chunks drop out of search, because every query only looks at the latest, non-removed version of each document.
+- **`EMBEDDING_MODEL` changed:** chunks from the old model are re-embedded automatically, without re-extracting anything.
+- **File removed:** its chunks drop out of search.
 
-For the 21 sample documents this produces 24 chunks. Most factsheet pages fit in a single chunk.
-
-**At question time (api side).** When Claude calls `search_documents`, the api embeds the query with the same model, runs the top 20 full-text matches (`websearch_to_tsquery` + `ts_rank_cd`) and the top 20 nearest vectors (cosine) over those chunks, merges the two lists with Reciprocal Rank Fusion (`score = Σ 1/(60 + rank)`), applies optional document-type and fund filters, and returns the top 8 passages with document, page and `chunk_id` for citation. Claude only ever sees passage text, never vectors.
+**At question time:** Ask embeds the search text with the same model, takes the top 20 keyword matches and the top 20 nearest vectors from Postgres, merges them (Reciprocal Rank Fusion) and sends the best 8 passages to Claude. Claude only ever sees passage text, never vectors.
 
 ### Search vs Ask
 - **Search** (`GET /api/search`): Postgres full-text search (`websearch_to_tsquery`, `ts_rank_cd`, `ts_headline`) on chunks, plus trigram and prefix matching on fund, account and document names. Instant and free.
