@@ -29,13 +29,15 @@ Stop everything with `./stop.sh`. Your data persists in the Docker volume.
 
 ## Full setup (your Google Drive + Claude)
 
+> 📄 **Prefer screenshots?** [`docs/setup-guide.pdf`](docs/setup-guide.pdf) walks through the Google Cloud and Anthropic console steps below with annotated screenshots (10 pages), plus the `init_env.sh` → `start.sh` → Connect flow and troubleshooting.
+
 ### 1. Prerequisites
 | Tool | Version | Check |
 |---|---|---|
 | Docker Desktop | running | `docker info` |
 | Python | 3.12 | `python3.12 --version` |
 | Node.js | LTS | `node --version` |
-| Anthropic API key | with credits | [console.anthropic.com](https://console.anthropic.com) → API keys |
+| Anthropic API key | with credits | [console.anthropic.com](https://console.anthropic.com) (now opens the Claude Console at platform.claude.com) → API keys |
 | Google account | any | used to own the Cloud project and the Drive folder |
 
 > The Anthropic API is billed separately from a Claude.ai subscription. The key's account needs a credit balance (Console → **Settings → Billing**). Otherwise every call fails with "credit balance is too low".
@@ -54,17 +56,17 @@ You create your own OAuth client; no Google credentials ship with this repo. The
    - Application type: **Web application**
    - Authorized redirect URIs: add **exactly** `http://localhost:8000/api/auth/google/callback`
      (no trailing slash, `localhost` not `127.0.0.1`; it must equal `GOOGLE_REDIRECT_URI` in `.env`)
-   - **Create**, then copy the **Client ID** and **Client secret**.
+   - **Create**. The dialog that follows shows the **Client ID** and **Client secret** and has a **Download JSON** button. **Download the JSON now** (or copy both values), because it's the only time Google offers it: an existing client's page no longer shows or downloads the secret. If you lose it, open the client and use **Add secret** to make a new one.
 
 ### 3. Fill in `.env`
 **Recommended: run the setup script.** It prepares `.env` for you, and it never prints a secret value.
 ```bash
 ./scripts/init_env.sh
 ```
-Have two things ready: your **Anthropic API key**, and the **client JSON** you downloaded in step 2.4 (**Google Auth Platform → Clients → your client → Download JSON**, usually named `client_secret_<id>.apps.googleusercontent.com.json`). The script then:
+Have two things ready: your **Anthropic API key**, and the **client JSON** you downloaded in step 2.4 (from the dialog shown right after **Create**, usually named `client_secret_<id>.apps.googleusercontent.com.json`). If you only copied the ID and secret, choose "type the client ID and secret" instead. The script then:
 
 1. **Checks git safety.** It confirms `.env` and its backups are git-ignored and that `.env` isn't tracked. If either check fails, it stops.
-2. **Creates or updates `.env`.** A missing `.env` is created from `.env.example`. An existing one is updated in place, and a backup is saved to `.env.bak.<timestamp>` first, but only if something actually changes.
+2. **Creates or updates `.env`.** A missing `.env` is created from `.env.example` (so is an empty one, or one with only comments). An existing one is updated in place, and a backup is saved to `.env.bak.<timestamp>` first, but only if something actually changes.
 3. **Step 1/4, Anthropic key.** Paste the key; typing is hidden. A new key is checked with one call to Anthropic (`valid` / `rejected` / `could not check`). A valid key still needs credits. Press Enter to keep a key that's already set.
 4. **Step 2/4, Google client.** Pick one:
    1. Path to the client JSON (drag the file into the terminal, or use Tab to complete the path)
@@ -95,9 +97,12 @@ Have two things ready: your **Anthropic API key**, and the **client JSON** you d
 | `--yes` | Accept every default without asking; implied when stdin isn't a terminal |
 | `--no-validate` | Don't call Anthropic to check the key |
 | `--rotate-keys` | Generate a new `FERNET_KEY` and `SESSION_SECRET`. **This disconnects Google Drive**; you'll need to connect again. |
+| `--reset` | Start fresh: replace `.env` from `.env.example` and ask for every key again (see below) |
 | `--help` | Show all options |
 
 **Re-running it is safe.** Pressing Enter at every prompt changes nothing and makes no backup. Only the values you enter are replaced. Avoid `--demo` and `--rotate-keys` on a working setup unless you mean to clear Google or reconnect Drive. The previous values are kept in `.env.bak.<timestamp>`, which is git-ignored and readable only by you.
+
+**Start fresh.** `./scripts/init_env.sh --reset` replaces `.env` with a fresh copy of `.env.example` and asks for the Anthropic key and the Google client again. There's no "keep current" option, and pressing Enter leaves a value empty. It asks you to confirm first (`--yes` skips this) and backs up the old file to `.env.bak.<timestamp>`. It **keeps `FERNET_KEY` by default** (it asks: *Keep your existing FERNET_KEY so your Google Drive connection keeps working? [Y/n]*), so Drive stays connected. Answer `n`, or pass `--rotate-keys`, to get new keys; then you'll click **Connect Google Drive** again, and your data is kept. A non-default `POSTGRES_PORT` and the database URLs are carried over too. With `--reset --yes`, values come only from `--anthropic-key-file`, `ANTHROPIC_API_KEY` and `--google-client-json`, and anything not given is left empty (demo mode).
 
 **Or edit `.env` by hand:**
 ```bash

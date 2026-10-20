@@ -12,6 +12,8 @@ Subcommands:
                                 non-secret findings ("kind web", "redirect ok", ...)
   check KEY                     exit 0 if the value on stdin can be written to .env
                                 exactly; else exit 1 with a reason (never the value)
+  has-settings FILE             exit 0 if FILE has at least one KEY= assignment, else 1
+                                (missing, empty, or only comments and blank lines)
   port-in-use PORT              exit 0 if something accepts TCP connections on PORT
   write BASE OUT [BACKUP]       apply ops read from stdin, write OUT atomically (0600).
                                 Every value is checked before anything touches disk.
@@ -24,6 +26,9 @@ Ops for `write` are NUL-separated triples `op\\0key\\0value\\0`:
   gen KEY              generate FERNET_KEY / SESSION_SECRET (scripts/gen_keys.py)
   clientjson - PATH    set GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET from the JSON
   port - PORT          set POSTGRES_PORT and the port in both DATABASE URLs
+  copy KEY PATH        set KEY to its value in the .env file at PATH (used by
+                       --reset to carry FERNET_KEY etc. over; the value never
+                       passes through the shell). Only COPYABLE_KEYS are allowed.
 """
 
 from __future__ import annotations
@@ -44,6 +49,8 @@ NON_SECRET_KEYS = frozenset(
     {"GOOGLE_REDIRECT_URI", "POSTGRES_PORT", "DATABASE_URL", "DATABASE_READONLY_URL", "DEMO_MODE"}
 )
 DB_URL_KEYS = ("DATABASE_URL", "DATABASE_READONLY_URL")
+# Keys `init_env.sh --reset` may carry over from the old .env into the fresh one.
+COPYABLE_KEYS = frozenset({"FERNET_KEY", "SESSION_SECRET", "POSTGRES_PORT", *DB_URL_KEYS})
 APPEND_HEADER = "# Added by scripts/init_env.sh"
 
 _ASSIGN_RE = re.compile(r"^(\s*)(export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=(.*)$")
@@ -115,6 +122,12 @@ def parse_env(text: str) -> dict[str, str]:
 
 def is_set(values: dict[str, str], key: str) -> bool:
     return bool(values.get(key, "").strip())
+
+
+def has_settings(text: str) -> bool:
+    """True if `text` has at least one `KEY=` assignment. A file that is empty or holds
+    only comments and whitespace has none, and init_env.sh treats it like a missing .env."""
+    return any(_ASSIGN_RE.match(line) for line in text.splitlines())
 
 
 def _unsafe_char(c: str) -> bool:
@@ -331,6 +344,13 @@ def resolve_updates(base_values: dict[str, str], ops: list[tuple[str, str, str]]
                 current = updates.get(k, base_values.get(k, ""))
                 if current.strip():
                     updates[k] = set_url_port(current, port)
+        elif op == "copy":
+            if key not in COPYABLE_KEYS:
+                raise EnvToolError(f"{key} can't be copied from another .env")
+            src = _read_values(value)
+            if not is_set(src, key):
+                raise EnvToolError(f"{key} is not set in {Path(value).name}")
+            updates[key] = src[key]
         else:
             raise EnvToolError(f"unknown op {op!r}")
     return updates
@@ -431,6 +451,10 @@ def main(argv: list[str]) -> int:
                 print(f"redirect_hint {info['redirect_hint']}")
         elif cmd == "check":
             check_value(args[0], sys.stdin.buffer.read().decode("utf-8", "surrogateescape"))
+        elif cmd == "has-settings":
+            p = Path(args[0])
+            text = p.read_text(encoding="utf-8", errors="replace") if p.is_file() else ""
+            return 0 if has_settings(text) else 1
         elif cmd == "port-in-use":
             return 0 if port_in_use(int(args[0])) else 1
         elif cmd == "write":

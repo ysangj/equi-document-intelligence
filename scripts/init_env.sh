@@ -24,9 +24,11 @@ Usage: ./scripts/init_env.sh [options]
 Creates or updates .env for Fund Document Intelligence. Run it from anywhere.
 
   * .env missing: it is created from .env.example.
+  * .env empty (no KEY= lines, only comments or blank lines): treated as missing.
   * .env present: it is kept. Only the values you enter are filled in or replaced,
     and a backup is saved first as .env.bak.<timestamp> (git-ignored), but only
     if something actually changes.
+  * --reset: start fresh (like `rm .env && ./scripts/init_env.sh`), see below.
 
 Steps:
   1. Anthropic API key   hidden prompt; Enter keeps the current one. Optionally
@@ -54,7 +56,27 @@ Options:
   --rotate-keys               generate a NEW FERNET_KEY and SESSION_SECRET even if
                               set. This invalidates the stored Google connection:
                               you'll have to click "Connect Google Drive" again.
+  --reset                     start fresh: replace .env with a full copy of
+                              .env.example (comments included) and ask for every
+                              key again. See "Start fresh" below.
   -h, --help                  show this help
+
+Start fresh (--reset):
+  * Asks "Continue? [y/N]" first (--yes skips the question). Without a terminal,
+    --reset needs --yes.
+  * The current .env is saved as .env.bak.<timestamp> (git-ignored, mode 600), and
+    a fresh .env is written from .env.example.
+  * Always asks for the Anthropic key and the Google client (JSON / type it / skip).
+    There is no "keep current" choice: Enter leaves the value empty.
+  * FERNET_KEY: if the old .env has one, you're asked "Keep your existing
+    FERNET_KEY so your Google Drive connection keeps working? [Y/n]". Yes is the
+    default. A new key means clicking "Connect Google Drive" again (your data and
+    watched folder are kept). SESSION_SECRET follows the same choice. With --yes
+    the keys are kept unless --rotate-keys is also given.
+  * POSTGRES_PORT, DATABASE_URL and DATABASE_READONLY_URL are carried over when the
+    old .env had non-default values. Carried-over keys are listed by name.
+  * With --yes, values come only from --anthropic-key-file, ANTHROPIC_API_KEY and
+    --google-client-json. Anything not given is left empty, which means demo mode.
 
 Environment:
   ANTHROPIC_API_KEY           used if set and no --anthropic-key-file is given
@@ -67,6 +89,7 @@ script runs non-interactively, as with --yes.
 Examples:
   ./scripts/init_env.sh                          # interactive, recommended
   ./scripts/init_env.sh --demo --yes             # demo mode, no keys needed
+  ./scripts/init_env.sh --reset                  # start fresh, asks for every key
   ./scripts/init_env.sh --yes --no-validate \
       --anthropic-key-file ~/secrets/anthropic.txt \
       --google-client-json ~/Downloads/client_secret_123.apps.googleusercontent.com.json
@@ -93,6 +116,7 @@ DEMO=0
 YES=0
 VALIDATE=1
 ROTATE=0
+RESET=0
 
 reject_secret_arg() {
   case "$1" in
@@ -114,6 +138,7 @@ while [ $# -gt 0 ]; do
     -y|--yes) YES=1; shift ;;
     --no-validate) VALIDATE=0; shift ;;
     --rotate-keys) ROTATE=1; shift ;;
+    --reset) RESET=1; shift ;;
     --anthropic-key|--anthropic-key=*|--anthropic-api-key*|--google-client-secret*|--client-secret*|--key|--key=*)
       die "secret values are not accepted as arguments. Use --anthropic-key-file PATH or --google-client-json PATH, or run without options to be prompted." ;;
     *) die "unknown option: ${1%%=*} (see --help)" ;;
@@ -247,13 +272,38 @@ else
   warn "not inside a git repository, so the ignore check was skipped"
 fi
 
+# ENV_STATE: missing | empty (no KEY= lines: treated as missing, no backup) | present
+ENV_STATE=missing
 if [ -f "$ENV_FILE" ]; then
+  if tool has-settings "$ENV_FILE"; then ENV_STATE=present; else ENV_STATE=empty; fi
+fi
+OLD_ENV=""   # --reset on a real .env: the old file, read only to carry keys over
+if [ "$ENV_STATE" = present ] && [ "$RESET" -eq 0 ]; then
   BASE="$ENV_FILE"; CREATING=0
   ok "Found an existing .env. It is kept; only what you enter below changes."
 else
   [ -f "$EXAMPLE_FILE" ] || die ".env.example not found in $ROOT"
   BASE="$EXAMPLE_FILE"; CREATING=1
-  ok "No .env yet. It will be created from .env.example."
+  if [ "$ENV_STATE" = present ]; then
+    step "Start fresh (--reset)"
+    if [ "$YES" -eq 0 ]; then
+      [ "$INTERACTIVE" -eq 1 ] || die "--reset replaces .env, and there's no terminal to confirm it. Add --yes to confirm. .env was not changed."
+      if ! ask_yn "This replaces your current .env with a fresh one from .env.example. Continue?" n; then
+        say "Cancelled. .env was not changed."
+        exit 1
+      fi
+    fi
+    OLD_ENV="$ENV_FILE"
+    ok "Starting fresh from .env.example. Your current .env is saved as .env.bak.<timestamp>"
+    note "(git-ignored, mode 600) when the new one is written. Nothing changes until then."
+  elif [ "$ENV_STATE" = empty ]; then
+    ok "Found an empty .env (no settings in it). It is replaced by a full copy of .env.example."
+  else
+    ok "No .env yet. It will be created from .env.example."
+  fi
+  if [ "$RESET" -eq 1 ] && [ -z "$OLD_ENV" ]; then
+    note "--reset: there's no current .env to replace, so nothing is backed up."
+  fi
 fi
 
 for k in $SUMMARY_KEYS DEMO_MODE; do printf -v "HAS_$k" '%s' 0; done
@@ -266,6 +316,27 @@ done
 if [ "$CREATING" -eq 1 ]; then
   for k in POSTGRES_PORT DATABASE_URL DATABASE_READONLY_URL; do has "$k" && set_status "$k" default; done
 fi
+
+# --reset: carry the Postgres port settings over when the old .env changed them, so a
+# port picked earlier (e.g. 55432) keeps working. Copied by env_tool (`copy` op).
+CARRIED=""
+carried() { case " $CARRIED " in *" $1 "*) return 0 ;; esac; return 1; }
+if [ -n "$OLD_ENV" ]; then
+  for k in POSTGRES_PORT DATABASE_URL DATABASE_READONLY_URL; do
+    ov="$(tool get "$OLD_ENV" "$k")"
+    dv="$(tool get "$EXAMPLE_FILE" "$k")"
+    if [ -n "$ov" ] && [ "$ov" != "$dv" ]; then
+      add_op copy "$k" "$OLD_ENV"; set_status "$k" kept; CARRIED="${CARRIED:+$CARRIED }$k"
+    fi
+  done
+  for k in FERNET_KEY SESSION_SECRET; do printf -v "OLD_HAS_$k" '%s' 0; done
+  while read -r k v; do
+    [ -n "$k" ] && printf -v "OLD_HAS_$k" '%s' "$v"
+  done < <(tool status "$OLD_ENV" FERNET_KEY SESSION_SECRET)
+fi
+old_has() { local n="OLD_HAS_$1"; [ "${!n:-0}" = 1 ]; }
+# A non-secret value as the new .env will have it (carried over from the old one, or from BASE).
+eff_get() { if carried "$1"; then tool get "$OLD_ENV" "$1"; else tool get "$BASE" "$1"; fi; }
 
 REDIRECT="$(tool get "$BASE" GOOGLE_REDIRECT_URI)"
 [ -n "$REDIRECT" ] || REDIRECT="$DEFAULT_REDIRECT"
@@ -320,6 +391,7 @@ validate_key() {
 prompt_key() {
   local hint
   if has ANTHROPIC_API_KEY; then hint="currently set; Enter keeps it"; else hint="Enter leaves it empty"; fi
+  if [ -n "$OLD_ENV" ]; then hint="Enter leaves it empty, the old key is not kept"; fi
   read -r -s -p "  Paste your Anthropic API key (input hidden; $hint): " NEW_KEY || NEW_KEY=""
   printf '\n'
   trim_var NEW_KEY
@@ -538,7 +610,36 @@ step "Step 3/4  Local secrets (FERNET_KEY, SESSION_SECRET)"
 note "FERNET_KEY encrypts the Google refresh token stored in Postgres; SESSION_SECRET signs"
 note "the short-lived OAuth state cookie. Both are random and generated here."
 ROTATED=0
-if [ "$ROTATE" -eq 1 ] && { has FERNET_KEY || has SESSION_SECRET; }; then
+if [ -n "$OLD_ENV" ]; then
+  # --reset: the fresh .env has no keys; offer to carry the old ones over.
+  KEEP_OLD=0
+  if old_has FERNET_KEY || old_has SESSION_SECRET; then
+    if [ "$ROTATE" -eq 1 ]; then
+      warn "--rotate-keys: new keys make the stored Google connection unreadable. After this you"
+      warn "must click \"Connect Google Drive\" again (your data and watched folder are kept)."
+      ROTATED=1
+    elif old_has FERNET_KEY; then
+      note "Your old .env has a FERNET_KEY, which decrypts the stored Google Drive connection."
+      note "A new key means clicking \"Connect Google Drive\" again (your data and watched folder are kept)."
+      if ask_yn "Keep your existing FERNET_KEY so your Google Drive connection keeps working?" y; then
+        KEEP_OLD=1
+      else
+        ROTATED=1
+      fi
+    else
+      KEEP_OLD=1   # only a SESSION_SECRET: keeping it is harmless
+    fi
+  fi
+  for k in FERNET_KEY SESSION_SECRET; do
+    if [ "$KEEP_OLD" -eq 1 ] && old_has "$k"; then
+      add_op copy "$k" "$OLD_ENV"; set_status "$k" kept; CARRIED="${CARRIED:+$CARRIED }$k"
+      ok "$k kept from your old .env."
+    else
+      add_op gen "$k" ""; set_status "$k" generated
+      ok "$k will be generated."
+    fi
+  done
+elif [ "$ROTATE" -eq 1 ] && { has FERNET_KEY || has SESSION_SECRET; }; then
   warn "--rotate-keys: new keys make the stored Google connection unreadable. After this you"
   warn "must click \"Connect Google Drive\" again (your data and watched folder are kept)."
   if [ "$INTERACTIVE" -eq 0 ] || ask_yn "Generate new FERNET_KEY and SESSION_SECRET?" n; then
@@ -547,7 +648,7 @@ if [ "$ROTATE" -eq 1 ] && { has FERNET_KEY || has SESSION_SECRET; }; then
     note "Keeping the current keys."
   fi
 fi
-for k in FERNET_KEY SESSION_SECRET; do
+[ -n "$OLD_ENV" ] || for k in FERNET_KEY SESSION_SECRET; do
   if [ "$ROTATED" -eq 1 ] || ! has "$k"; then
     add_op gen "$k" ""; set_status "$k" generated
     ok "$k will be generated."
@@ -555,14 +656,14 @@ for k in FERNET_KEY SESSION_SECRET; do
     ok "$k kept (currently set)."
   fi
 done
-if [ "$ROTATED" -eq 0 ] && has FERNET_KEY; then
+if [ "$ROTATED" -eq 0 ] && { has FERNET_KEY || carried FERNET_KEY; }; then
   note "FERNET_KEY is kept on purpose: changing it invalidates the stored Google connection."
   note "Use --rotate-keys only if you want new keys and are ready to reconnect Drive."
 fi
 
 # ---- 4. Postgres port --------------------------------------------------------------
 step "Step 4/4  Postgres port"
-CUR_PORT="$(tool get "$BASE" POSTGRES_PORT)"
+CUR_PORT="$(eff_get POSTGRES_PORT)"
 [ -n "$CUR_PORT" ] || CUR_PORT=5432
 case "$CUR_PORT" in *[!0-9]*) die "POSTGRES_PORT in .env is not a number" ;; esac
 NEW_PORT=""
@@ -593,7 +694,7 @@ if [ -n "$NEW_PORT" ]; then
 else
   PORT_NOW="$CUR_PORT"
   for k in DATABASE_URL DATABASE_READONLY_URL; do
-    u="$(tool get "$BASE" "$k")"
+    u="$(eff_get "$k")"
     up="$(printf '%s' "$u" | sed -n -E 's#^[^/]*//([^@/]*@)?(localhost|127\.0\.0\.1):([0-9]+)/.*#\3#p')"
     if [ -n "$up" ] && [ "$up" != "$CUR_PORT" ]; then
       warn "$k points at localhost:$up but POSTGRES_PORT is $CUR_PORT. Make them the same."
@@ -615,7 +716,7 @@ else
   # collected), and only then, if .env exists and its content really changes, copies
   # it to BACKUP before replacing it. A refused value leaves no backup (BUG-Q7-03).
   BACKUP=""
-  if [ "$CREATING" -eq 0 ]; then
+  if [ "$ENV_STATE" = present ]; then  # an empty .env isn't worth a backup
     BACKUP="$ROOT/.env.bak.$(date +%Y%m%d-%H%M%S)"
     n=1
     while [ -e "$BACKUP" ]; do BACKUP="$ROOT/.env.bak.$(date +%Y%m%d-%H%M%S).$n"; n=$((n + 1)); done
@@ -634,7 +735,9 @@ else
     *)
       WROTE=1
       [ "$WRITE_RESULT" = backup ] && ok "Backed up the old .env to ${BACKUP#"$ROOT"/} (git-ignored, mode 600)."
-      if [ "$CREATING" -eq 1 ]; then ok "Created .env from .env.example (mode 600)."; else ok "Updated .env in place (mode 600)."; fi ;;
+      if [ -n "$OLD_ENV" ]; then ok "Replaced .env with a fresh copy of .env.example (mode 600)."
+      elif [ "$CREATING" -eq 1 ]; then ok "Created .env from .env.example (mode 600)."
+      else ok "Updated .env in place (mode 600)."; fi ;;
   esac
 fi
 OP_V=()
@@ -669,6 +772,17 @@ for k in $SUMMARY_KEYS; do
 done
 [ "${DEMO_MODE_CLEARED:-0}" = 1 ] && printf '  %-24s %s\n' "DEMO_MODE" "cleared"
 note "Postgres host port: $PORT_NOW"
+if [ -n "$OLD_ENV" ]; then
+  if [ -n "$CARRIED" ]; then
+    note "Carried over from your old .env: ${CARRIED// /, }"
+  else
+    note "Nothing was carried over from your old .env."
+  fi
+  if [ "$INTERACTIVE" -eq 0 ]; then
+    note "Reset without prompts: values came only from --anthropic-key-file, ANTHROPIC_API_KEY"
+    note "and --google-client-json. Anything not given was left empty (empty Google client = demo mode)."
+  fi
+fi
 
 say ""
 if [ "$DEMO_ON" -eq 1 ]; then

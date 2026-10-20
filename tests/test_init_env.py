@@ -989,3 +989,292 @@ def test_interactive_cancel_after_refusal_leaves_no_backup(sb):
     assert stuck is None and rc == 130, t
     assert "Cancelled. .env was not changed." in t
     assert _snapshot(sb) == before
+
+
+# --------------------------------------------------------------------------- --reset (start fresh)
+CONFIRM = r"This replaces your current \.env with a fresh one from \.env\.example\. Continue\? \[y/N\] "
+KEEP_FERNET = r"Keep your existing FERNET_KEY so your Google Drive connection keeps working\? \[Y/n\] "
+OLD_KEY = "sk-ant-api03-FAKE-OLD-key"
+OLD_ID = "999-oldfake.apps.googleusercontent.com"
+OLD_SECRET = "GOCSPX-fake-OLD-secret"
+OLD_PORT_URLS = {
+    "POSTGRES_PORT": "55432",
+    "DATABASE_URL": "postgresql+psycopg://app:app@localhost:55432/docintel",
+    "DATABASE_READONLY_URL": "postgresql+psycopg://app_readonly:app_readonly@localhost:55432/docintel",
+}
+
+
+def _write_old_env(sb, ports: dict | None = None) -> tuple[str, str, str]:
+    """A hand-edited old .env (custom comment, custom key, fake secrets). Returns (text, fernet, session)."""
+    fernet, session = tool.generate("FERNET_KEY"), tool.generate("SESSION_SECRET")
+    lines = ["# my old hand-edited header", f"ANTHROPIC_API_KEY={OLD_KEY}", f"GOOGLE_CLIENT_ID={OLD_ID}",
+             f"GOOGLE_CLIENT_SECRET={OLD_SECRET}", f"FERNET_KEY={fernet}", f"SESSION_SECRET={session}",
+             "CUSTOM_THING=old-only"]
+    lines += [f"{k}={v}" for k, v in (OLD_PORT_URLS if ports is None else ports).items()]
+    text = "\n".join(lines) + "\n"
+    sb.env_path.write_text(text)
+    sb.env_path.chmod(0o644)
+    return text, fernet, session
+
+
+def _assert_full_template(sb):
+    example = (sb.root / ".env.example").read_text()
+    created = sb.env_path.read_text()
+    assert env_keys_in_order(created) == env_keys_in_order(example)
+    assert comment_lines(created) == comment_lines(example)
+    assert "CUSTOM_THING" not in created and "my old hand-edited header" not in created
+    assert stat.S_IMODE(sb.env_path.stat().st_mode) == 0o600
+
+
+def _one_backup(sb, expected_text: str) -> Path:
+    backups = list(sb.root.glob(".env.bak.*"))
+    assert len(backups) == 1
+    assert backups[0].read_text() == expected_text
+    assert stat.S_IMODE(backups[0].stat().st_mode) == 0o600
+    assert subprocess.run(["git", "-C", str(sb.root), "check-ignore", "-q", backups[0].name]).returncode == 0
+    return backups[0]
+
+
+def test_help_documents_reset(sb):
+    r = sb.run("--help")
+    flat = " ".join(r.stdout.split())
+    assert "--reset" in flat and "Start fresh" in flat
+    assert "Keep your existing FERNET_KEY so your Google Drive connection keeps working? [Y/n]" in flat
+    assert "unless --rotate-keys is also given" in flat
+    assert "Connect Google Drive" in flat and ".env.bak.<timestamp>" in flat
+    assert "no \"keep current\" choice" in flat
+
+
+def test_reset_yes_with_inputs_gives_fresh_template_and_keeps_keys(sb):
+    old_text, fernet, session = _write_old_env(sb)
+    r = sb.run("--reset", "--yes", "--no-validate", "--anthropic-key-file", sb.key_file(),
+               "--google-client-json", sb.client_json())
+    assert r.returncode == 0, output(r)
+    _assert_full_template(sb)
+    v = sb.env_values()
+    assert (v["ANTHROPIC_API_KEY"], v["GOOGLE_CLIENT_ID"], v["GOOGLE_CLIENT_SECRET"]) == (FAKE_KEY, FAKE_ID, FAKE_SECRET)
+    assert (v["FERNET_KEY"], v["SESSION_SECRET"]) == (fernet, session)
+    assert {k: v[k] for k in OLD_PORT_URLS} == OLD_PORT_URLS
+    assert v["CLAUDE_MODEL"] == "claude-opus-5-5" and v["GOOGLE_REDIRECT_URI"] == REDIRECT
+    _one_backup(sb, old_text)
+    assert "Replaced .env with a fresh copy of .env.example" in r.stdout
+    assert ("Carried over from your old .env: POSTGRES_PORT, DATABASE_URL, DATABASE_READONLY_URL, "
+            "FERNET_KEY, SESSION_SECRET") in r.stdout
+    assert status_of(r, "FERNET_KEY") == "kept" and status_of(r, "POSTGRES_PORT") == "kept"
+    assert status_of(r, "ANTHROPIC_API_KEY") == "set" and status_of(r, "GOOGLE_CLIENT_ID") == "set"
+    assert "Mode: Google Drive" in r.stdout
+    assert_no_secrets(r, FAKE_KEY, FAKE_ID, FAKE_SECRET, OLD_KEY, OLD_ID, OLD_SECRET, fernet, session)
+
+
+def test_reset_yes_rotate_keys_generates_new_keys(sb):
+    old_text, fernet, session = _write_old_env(sb)
+    r = sb.run("--reset", "--yes", "--no-validate", "--rotate-keys")
+    assert r.returncode == 0, output(r)
+    v = sb.env_values()
+    assert v["FERNET_KEY"] and v["FERNET_KEY"] != fernet
+    assert v["SESSION_SECRET"] and v["SESSION_SECRET"] != session
+    from cryptography.fernet import Fernet
+    Fernet(v["FERNET_KEY"].encode())
+    assert status_of(r, "FERNET_KEY") == "generated"
+    assert "Connect Google Drive" in r.stderr
+    assert "Carried over from your old .env: POSTGRES_PORT, DATABASE_URL, DATABASE_READONLY_URL\n" in r.stdout
+    assert dotenv_values(_one_backup(sb, old_text))["FERNET_KEY"] == fernet
+    assert_no_secrets(r, fernet, session, v["FERNET_KEY"], v["SESSION_SECRET"], OLD_KEY, OLD_SECRET)
+
+
+def test_reset_yes_without_inputs_gives_demo_mode(sb):
+    old_text, fernet, _ = _write_old_env(sb)
+    r = sb.run("--reset", "--yes", "--no-validate")
+    assert r.returncode == 0, output(r)
+    _assert_full_template(sb)
+    v = sb.env_values()
+    assert v["ANTHROPIC_API_KEY"] == "" and v["GOOGLE_CLIENT_ID"] == "" and v["GOOGLE_CLIENT_SECRET"] == ""
+    assert v["FERNET_KEY"] == fernet
+    assert status_of(r, "ANTHROPIC_API_KEY") == "empty (fixtures)"
+    assert status_of(r, "GOOGLE_CLIENT_ID") == "empty (demo)"
+    assert "Mode: demo with fixtures" in r.stdout
+    flat = " ".join(r.stdout.split())
+    assert ("values came only from --anthropic-key-file, ANTHROPIC_API_KEY and --google-client-json. "
+            "Anything not given was left empty (empty Google client = demo mode)") in flat
+    _one_backup(sb, old_text)
+    assert_no_secrets(r, OLD_KEY, OLD_ID, OLD_SECRET, fernet)
+
+
+def test_reset_yes_uses_anthropic_key_from_environment(sb):
+    _write_old_env(sb)
+    r = sb.run("--reset", "--yes", "--no-validate", env={"ANTHROPIC_API_KEY": FAKE_KEY})
+    assert r.returncode == 0, output(r)
+    assert sb.env_values()["ANTHROPIC_API_KEY"] == FAKE_KEY
+    assert sb.env_values()["GOOGLE_CLIENT_ID"] == ""
+    assert_no_secrets(r, FAKE_KEY, OLD_KEY)
+
+
+def test_reset_default_ports_are_not_listed_as_carried(sb):
+    defaults = {k: tool.parse_env((sb.root / ".env.example").read_text())[k] for k in OLD_PORT_URLS}
+    _write_old_env(sb, ports=defaults)
+    r = sb.run("--reset", "--yes", "--no-validate")
+    assert r.returncode == 0, output(r)
+    assert "Carried over from your old .env: FERNET_KEY, SESSION_SECRET\n" in r.stdout
+    assert status_of(r, "POSTGRES_PORT") == "default"
+    assert sb.env_values()["POSTGRES_PORT"] == "5432"
+
+
+def test_reset_carried_port_still_goes_through_port_check(sb):
+    _write_old_env(sb)
+    r = sb.run("--reset", "--yes", "--no-validate", env={"FAKE_BUSY_PORTS": "55432"})
+    assert r.returncode == 0, output(r)
+    v = sb.env_values()
+    assert v["POSTGRES_PORT"] == "55433"
+    assert v["DATABASE_URL"].endswith("@localhost:55433/docintel")
+    assert v["DATABASE_READONLY_URL"].endswith("@localhost:55433/docintel")
+
+
+def test_reset_old_env_without_keys_generates_them(sb):
+    old = "ANTHROPIC_API_KEY=" + OLD_KEY + "\n"
+    sb.env_path.write_text(old)
+    r = sb.run("--reset", "--yes", "--no-validate")
+    assert r.returncode == 0, output(r)
+    assert "Keep your existing FERNET_KEY" not in r.stdout
+    assert status_of(r, "FERNET_KEY") == "generated" and status_of(r, "SESSION_SECRET") == "generated"
+    assert "Nothing was carried over from your old .env." in r.stdout
+    _one_backup(sb, old)
+
+
+def test_reset_without_terminal_needs_yes(sb):
+    _write_old_env(sb)
+    before = _snapshot(sb)
+    r = sb.run("--reset", "--no-validate")  # stdin is /dev/null, no --yes
+    assert r.returncode == 1
+    assert "Add --yes to confirm" in r.stderr and ".env was not changed" in r.stderr
+    assert _snapshot(sb) == before
+
+
+def test_reset_without_existing_env_just_creates_it(sb):
+    r = sb.run("--reset", "--no-validate")  # nothing to replace: no confirmation needed
+    assert r.returncode == 0, output(r)
+    _assert_full_template(sb)
+    assert "nothing is backed up" in r.stdout and "Created .env from .env.example" in r.stdout
+    assert not list(sb.root.glob(".env.bak.*"))
+
+
+def test_reset_invalid_input_leaves_old_env_and_no_backup(sb):
+    _write_old_env(sb)
+    before = _snapshot(sb)
+    r = sb.run("--reset", "--yes", "--no-validate", "--google-client-json", sb.client_json(secret=BAD_SECRET))
+    _assert_refused_cleanly(sb, r, before, BAD_SECRET, OLD_KEY, OLD_SECRET)
+
+
+@pytest.mark.parametrize("content", ["", "\n\n", "# only a comment\n   \n\t\n# another\n"],
+                         ids=["empty", "blank-lines", "comments-only"])
+@pytest.mark.parametrize("reset", [False, True], ids=["normal", "reset"])
+def test_empty_env_is_treated_as_missing(sb, content, reset):
+    sb.env_path.write_text(content)
+    args = ["--reset"] if reset else []
+    r = sb.run(*args, "--yes", "--no-validate", "--demo")
+    assert r.returncode == 0, output(r)
+    _assert_full_template(sb)
+    assert "Found an empty .env" in r.stdout and "Created .env from .env.example" in r.stdout
+    assert not list(sb.root.glob(".env.bak.*"))
+    assert "Backed up" not in r.stdout and "Continue?" not in r.stdout
+    assert status_of(r, "FERNET_KEY") == "generated"
+
+
+def test_interactive_reset_answer_no_aborts_without_change(sb):
+    _write_old_env(sb)
+    before = _snapshot(sb)
+    rc, t, stuck = pty_run(sb, ["--reset", "--no-validate"], [(CONFIRM, "n\r")])
+    assert stuck is None and rc == 1, t
+    assert "Cancelled. .env was not changed." in t
+    assert "Paste your Anthropic API key" not in t
+    assert _snapshot(sb) == before  # same .env, no backup, no temp file
+
+
+def test_interactive_reset_confirm_defaults_to_no(sb):
+    _write_old_env(sb)
+    before = _snapshot(sb)
+    rc, t, stuck = pty_run(sb, ["--reset", "--no-validate"], [(CONFIRM, "\r")])
+    assert stuck is None and rc == 1 and "Cancelled" in t, t
+    assert _snapshot(sb) == before
+
+
+def test_interactive_reset_asks_for_everything_and_keeps_fernet_by_default(sb):
+    old_text, fernet, session = _write_old_env(sb)
+    rc, t, stuck = pty_run(sb, ["--reset", "--no-validate"], [
+        (CONFIRM, "y\r"),
+        (KEY_PROMPT, FAKE_KEY + "\r"),
+        (r"Choose \[1\]: ", "3\r"),
+        (KEEP_FERNET, "\r"),            # default: keep
+        (PORT_FREE, ""),
+    ])
+    assert stuck is None and rc == 0, t
+    assert "Enter leaves it empty, the old key is not kept" in t and "Enter keeps it" not in t
+    assert "Keep the current client" not in t and "4)" not in t
+    assert "A new key means clicking \"Connect Google Drive\" again" in t
+    assert "keys were rotated" not in t
+    v = sb.env_values()
+    assert v["ANTHROPIC_API_KEY"] == FAKE_KEY and v["GOOGLE_CLIENT_ID"] == ""
+    assert (v["FERNET_KEY"], v["SESSION_SECRET"]) == (fernet, session)
+    _assert_full_template(sb)
+    _one_backup(sb, old_text)
+    assert_no_secrets(subprocess.CompletedProcess([], 0, t, ""), FAKE_KEY, OLD_KEY, OLD_ID, OLD_SECRET, fernet, session)
+
+
+def test_interactive_reset_enter_does_not_keep_old_values(sb):
+    old_text, fernet, session = _write_old_env(sb)
+    rc, t, stuck = pty_run(sb, ["--reset", "--no-validate"], [
+        (CONFIRM, "y\r"),
+        (KEY_PROMPT, "\r"),             # Enter: empty, NOT the old key
+        (r"Choose \[1\]: ", "\r"),      # Enter = option 1 (JSON path), never "keep"
+        (r"Path to the client JSON", "\r"),   # no path -> back to the menu
+        (r"Choose \[1\]: ", "2\r"),
+        (r"Client ID \(", FAKE_ID + "\r"),
+        (r"Client secret \(input hidden\): ", FAKE_SECRET + "\r"),
+        (KEEP_FERNET, "n\r"),           # new keys
+        (PORT_FREE, ""),
+    ])
+    assert stuck is None and rc == 0, t
+    v = sb.env_values()
+    assert v["ANTHROPIC_API_KEY"] == ""
+    assert (v["GOOGLE_CLIENT_ID"], v["GOOGLE_CLIENT_SECRET"]) == (FAKE_ID, FAKE_SECRET)
+    assert v["FERNET_KEY"] != fernet and v["SESSION_SECRET"] != session
+    assert "keys were rotated: after ./start.sh, click \"Connect Google Drive\" again." in t
+    _one_backup(sb, old_text)
+    assert_no_secrets(subprocess.CompletedProcess([], 0, t, ""), FAKE_SECRET, OLD_KEY, OLD_ID, OLD_SECRET,
+                      fernet, session, v["FERNET_KEY"], v["SESSION_SECRET"])
+
+
+def test_has_settings():
+    assert not tool.has_settings("")
+    assert not tool.has_settings("# A=1\n  \n\t# B=2\n")
+    assert tool.has_settings("# c\nA=\n")
+    assert tool.has_settings("export B=2\n")
+
+
+def test_has_settings_cli(tmp_path):
+    p = tmp_path / ".env"
+    assert tool.main(["has-settings", str(p)]) == 1  # missing
+    p.write_text("# only comments\n\n")
+    assert tool.main(["has-settings", str(p)]) == 1
+    p.write_text("K=\n")
+    assert tool.main(["has-settings", str(p)]) == 0
+
+
+def test_copy_op(tmp_path):
+    old = tmp_path / "old.env"
+    old.write_text(f"FERNET_KEY='{FAKE_SECRET_QUOTED}'\nANTHROPIC_API_KEY={FAKE_KEY}\nSESSION_SECRET=\n")
+    assert tool.resolve_updates({}, [("copy", "FERNET_KEY", str(old))]) == {"FERNET_KEY": FAKE_SECRET_QUOTED}
+    with pytest.raises(tool.EnvToolError, match="can't be copied"):
+        tool.resolve_updates({}, [("copy", "ANTHROPIC_API_KEY", str(old))])
+    with pytest.raises(tool.EnvToolError, match="SESSION_SECRET is not set") as exc:
+        tool.resolve_updates({}, [("copy", "SESSION_SECRET", str(old))])
+    assert FAKE_KEY not in str(exc.value)
+
+
+def test_write_env_copy_then_port_uses_copied_urls(tmp_path):
+    old = tmp_path / "old.env"
+    old.write_text("DATABASE_URL=postgresql://a:a@localhost:6000/d\n")
+    base = tmp_path / "example"
+    base.write_text("# c\nPOSTGRES_PORT=5432\nDATABASE_URL=postgresql://a:a@localhost:5432/d\n")
+    out = tmp_path / ".env"
+    tool.write_env(base, out, [("copy", "DATABASE_URL", str(old)), ("port", "-", "7000")])
+    assert out.read_text() == "# c\nPOSTGRES_PORT=7000\nDATABASE_URL=postgresql://a:a@localhost:7000/d\n"
