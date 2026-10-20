@@ -45,6 +45,8 @@ Stop everything with `./stop.sh`. Your data persists in the Docker volume.
 ### 2. Create the Google Cloud OAuth client
 You create your own OAuth client; no Google credentials ship with this repo. The app stays in **Testing** mode, so no Google verification is needed.
 
+> 📄 **Step-by-step with screenshots:** see [Part 1 of the setup guide (PDF)](docs/setup-guide.pdf) for an annotated screenshot of every step below.
+
 1. **Create a project.** Go to [console.cloud.google.com](https://console.cloud.google.com), open the project picker, choose **New project** and name it (e.g. `doc-intelligence`).
 2. **Enable the Drive API.** Go to **APIs & Services → Library**, search **Google Drive API**, then **Enable**.
    *Easy to miss: without it, sign-in succeeds but listing folders fails.*
