@@ -214,7 +214,28 @@ The api and worker hold **no state in memory** between requests or iterations. E
 
 ### Pipeline
 1. **Sync** (worker). On every boot, and when a folder is picked, a **full reconcile** lists the folder and compares it with the database by `(file id, md5)`. Then every `SYNC_INTERVAL_SECONDS` (30), an **incremental sync** reads Drive `changes.list` from the stored page token. New or changed files become `pending`, and files that disappeared become `removed`. The page token and document updates are committed in one transaction.
-2. **Queue.** `WORKER_CONCURRENCY` (4) tasks claim jobs with `SELECT … FOR UPDATE SKIP LOCKED`. Retries use exponential backoff, up to `MAX_ATTEMPTS`, then the document is marked `failed` with the error. A job left `processing` by a dead worker is reclaimed after 60 s.
+2. **Queue.** There's no separate queue service: the `documents` table in Postgres *is* the queue.
+   - **What a job is.** A job is one document row with `status = 'pending'`, waiting to be extracted. Sync creates it when it finds a new or changed file, and **Reprocess** sets it back to `pending`.
+   - **4 docs at once.** The worker process runs **`WORKER_CONCURRENCY` = 4 job threads**, so up to **4 documents are extracted by Claude at the same time**. That's why the 21 sample docs finish in about 90 s rather than about 5 minutes.
+   - **Claiming a job.** Each thread grabs its next job with one atomic statement (`app/ingest/queue.py`, simplified):
+     ```sql
+     WITH c AS (
+       SELECT id FROM documents
+       WHERE is_latest
+         AND status = 'pending'
+         AND (next_attempt_at IS NULL OR next_attempt_at <= now())  -- not waiting for a retry
+       ORDER BY next_attempt_at NULLS FIRST, id
+       LIMIT 1
+       FOR UPDATE SKIP LOCKED                                       -- lock it; skip rows other threads hold
+     )
+     UPDATE documents d
+     SET status = 'processing', claimed_at = now(), attempts = d.attempts + 1
+     FROM c WHERE d.id = c.id
+     RETURNING d.id, d.name, d.mime_type;
+     ```
+     `FOR UPDATE` locks the row a thread picks, and `SKIP LOCKED` makes every other thread **skip rows that are already locked instead of waiting for them**. **The same row is never grabbed by two threads**, even across several worker processes, so no document is extracted twice at the same time. The `UPDATE` marks it `processing` in the same statement.
+   - **Retries.** A temporary error (Anthropic 429/5xx, a Drive or network hiccup) puts the document back to `pending` with `next_attempt_at` set later, using exponential backoff of about 5 s, then 10 s, then 20 s (capped at 5 min, with jitter, and respecting "retry after"). After `MAX_ATTEMPTS` (3) it's marked `failed`, with the error shown on the Ingestion page. A permanent error, such as an unsupported file, fails immediately.
+   - **Crash recovery.** A running job refreshes `claimed_at` every 10 s. If the worker dies mid-job, that row stays `processing` with no fresh heartbeat, and after **60 s** the claim query also picks it up (it matches `status = 'processing'` with an old `claimed_at`, a clause omitted above), so it's re-run. A job only saves its result if it still holds the claim, so nothing is written twice.
 3. **Extract.** One Claude call per document, with PDFs sent as native document blocks and HTML/CSV as text. Claude returns schema-validated structured output: document type, fund and/or statement fields (each with page, verbatim snippet and confidence), and per-page text, which covers scanned PDFs.
 4. **Normalize and validate** (deterministic code). Converts %, bps, `(0.8)`, decimals, dates and amounts like `12.40mm`. Resolves fund and account names (exact match, fuzzy match → review, or new). Checks:
    - monthly return within ±50%
