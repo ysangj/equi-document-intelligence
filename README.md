@@ -278,6 +278,8 @@ Chunks are keyword-searchable as soon as the extraction commits. Embeddings are 
 
 **At question time:** Ask embeds the search text with the same model, takes the top 20 keyword matches and the top 20 nearest vectors from Postgres, merges them (Reciprocal Rank Fusion) and sends the best 8 passages to Claude. Claude only ever sees passage text, never vectors.
 
+> 📄 **Diagram:** [`docs/ask-sequence.pdf`](docs/ask-sequence.pdf) is a UML sequence diagram of the whole Ask request (`POST /api/ask`): the Claude tool loop, the `query_sql` path (guard → read-only Postgres), and the `search_documents` path (fastembed → full-text + pgvector search → RRF → top 8).
+
 ### Search vs Ask
 - **Search** (`GET /api/search`): Postgres full-text search (`websearch_to_tsquery`, `ts_rank_cd`, `ts_headline`) on chunks, plus trigram and prefix matching on fund, account and document names. Instant and free.
 - **Ask** (`POST /api/ask`): a Claude tool-use loop (up to 6 steps) with two tools:
